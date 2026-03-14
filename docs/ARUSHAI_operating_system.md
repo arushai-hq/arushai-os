@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.2.0 |
+| Version | 0.3.0 |
 | Last Updated | 2026-03-14 |
 | Author | Irfan |
-| Status | Sections 1-2 complete, Sections 3-8 scaffolded |
+| Status | Sections 1-3 complete, Sections 4-8 scaffolded |
 
 ---
 
@@ -216,9 +216,152 @@ When should an AI agent (Stage 3+) stop and ask the founder?
 
 ## Section 3 — The Product Development Lifecycle
 
-The end-to-end process for taking a product from idea to production. Covers five phases: Research and Validation, Architecture and Planning, Build, Deploy and Validate, Operate and Iterate. Includes the CC prompt protocol, quality gates, and documentation requirements at each phase.
+### 3.1 — Overview
 
-[TO BE COMPLETED]
+Every ARUSHAI product follows a five-phase lifecycle. No phase is skipped. Each phase has defined inputs, outputs, and quality gates before moving to the next.
+
+The phases: Research and Validation, Architecture and Planning, Build, Deploy and Validate, Operate and Iterate.
+
+This lifecycle applies to new products, major features, and significant architectural changes. Minor bug fixes and routine updates follow the Bug Triage Protocol (Section 2.3) instead.
+
+### 3.2 — Phase 1: Research and Validation
+
+**Purpose:** Determine whether a problem is worth solving and whether ARUSHAI can solve it differently or better than what exists.
+
+**Activities:**
+
+- Identify a real human problem — not a technology looking for a problem.
+- Conduct a FORGE session (web session deep-dive) to research the domain, market, competitors, and technical feasibility.
+- Gather evidence: market size, existing solutions, gaps in current offerings, relevant technologies.
+- Every claim must be backed by evidence — web search results, published data, or verifiable sources. No assumptions presented as facts.
+- Apply the differentiation check: if ARUSHAI cannot offer something meaningfully different or better, do not build.
+
+**Outputs:**
+
+- FORGE session summary stored in arushai-hq/arushai-os/docs/forge-sessions/.
+- GO / NO-GO decision documented with rationale.
+
+**Quality Gate:** The founder must be able to articulate in one sentence what problem this solves, for whom, and why ARUSHAI is the right one to solve it. If this sentence is unclear, the product stays in research.
+
+### 3.3 — Phase 2: Architecture and Planning
+
+**Purpose:** Design the solution completely before writing any code. This is the Nemawashi phase — the heaviest investment of thinking time.
+
+**Activities:**
+
+- Define the technology stack with rationale for each choice.
+- Design the data model, API structure, and system architecture.
+- Identify deployment strategy (VPS, Vercel, Docker, etc.).
+- Model costs: API costs, hosting costs, projected revenue if applicable.
+- Explore edge cases, failure modes, and security considerations.
+- Compare alternative approaches — never commit to the first idea without evaluating at least one alternative.
+- Create the product living document ([Product]_context.md) at the repo root as the single source of truth.
+- Set up the repo with appropriate skills installed at project level (per the Skill Installation Protocol defined in Section 4).
+- Write comprehensive CLAUDE.md defining CC's role, boundaries, and conventions for this project.
+- Generate CC prompts only after architecture decisions are locked.
+
+**Outputs:**
+
+- Product living document created and populated with architecture decisions.
+- Repo initialized with CLAUDE.md, skills, README.md, and project structure.
+- First CC prompts ready for execution.
+
+**Quality Gate:** Architecture decisions are locked. The founder can describe the full system — stack, data flow, deployment, and cost model — without hesitation. Any open questions have been resolved or explicitly deferred with rationale.
+
+### 3.4 — Phase 3: Build
+
+**Purpose:** Execute the plan through CC. The founder generates instruction-only prompts; CC writes the code.
+
+**Activities:**
+
+- CC executes prompts following the CC Interaction Protocol (Section 4).
+- Every CC prompt specifies: git branch, skills to activate, context reference, what to build, acceptance criteria, do-not list, and when-done actions.
+- CC prompts never contain actual code — only intent, requirements, and constraints. CC has its own skills and project context to determine implementation.
+- Test suite grows with every feature. The benchmark is TradeOS: 340+ tests, zero failures.
+- README.md updated with every feature addition.
+- Living document updated after every concluded discussion or build cycle.
+- Batch related changes into single commits. Separate architecturally distinct changes into their own commits.
+
+**The Build Rhythm:**
+
+- Web session: brainstorm and lock the next feature or fix.
+- Generate CC prompt with full context.
+- CC executes and delivers.
+- Founder reviews output against acceptance criteria.
+- If acceptance criteria met: merge, update living document, move to next.
+- If not met: identify gaps, generate follow-up CC prompt, iterate.
+- After each build cycle: run full test suite, verify zero failures.
+
+**Outputs:**
+
+- Working code committed to feature branch.
+- Tests passing with zero failures.
+- README.md and living document current.
+- Feature branch ready for merge to main.
+
+**Quality Gate:** All acceptance criteria from the CC prompt are met. Full test suite passes with zero failures. README.md and living document are updated. No known regressions.
+
+### 3.5 — Phase 4: Deploy and Validate
+
+**Purpose:** Put the product into production and verify it behaves correctly in the real environment.
+
+**Activities:**
+
+- Deploy following the product-specific deployment process (git pull on VPS for TradeOS, Vercel deploy for Flint, Docker Compose for VIZBOARD).
+- Run smoke tests in the production environment — verify core functionality works end-to-end.
+- Set up monitoring appropriate to the product: automated notifications (Telegram for TradeOS), error tracking, log monitoring.
+- Monitor actively for the first 24-48 hours — do not deploy and walk away.
+- Establish a notification cadence: regular health check signals (e.g., TradeOS sends Telegram notifications every 30 minutes during market hours). If a scheduled notification is missed, immediately check server logs.
+- Document any production-specific configuration or environment differences.
+
+**The Monitoring Philosophy:** Production is not "set and forget." Every deployed product is actively monitored. Missed notifications or unexpected silence from monitoring triggers immediate investigation. The founder checks monitoring regularly and treats monitoring gaps as potential incidents.
+
+**Outputs:**
+
+- Product live in production.
+- Monitoring configured and verified.
+- First 24-48 hours monitored without critical issues.
+- Any production issues documented and fed back into the Build phase.
+
+**Quality Gate:** Product is running in production with active monitoring. No critical bugs in the first 24-48 hours. Monitoring notifications are arriving on schedule.
+
+### 3.6 — Phase 5: Operate and Iterate
+
+**Purpose:** Continuously run, monitor, improve, and decide the product's future.
+
+**Activities:**
+
+- Ongoing monitoring per the established cadence.
+- Bug triage following Section 2.3 protocol.
+- Session debriefs after significant operating periods (TradeOS pattern: run the system, identify issues, fix them, document findings, as done in Sessions 01-04).
+- Feature iteration: new ideas and improvements enter through the Nemawashi process (Phase 1-2 lite for features within an existing product).
+- Performance tracking: is the product delivering on its intended purpose?
+
+**Idea Capture:** Currently, new ideas and feature requests live in the founder's mind until a web session begins. This is a known gap. A structured capture system (voice notes, quick-entry tool, or simple backlog file per product) is on the roadmap to ensure ideas are not lost between sessions. Until that system exists, the living document serves as the capture point during active sessions.
+
+**Product Survival Criteria:** If a deployed product consistently fails to deliver value (no revenue, no traction, ongoing costs with no return) over a sustained period (2-3 months post-launch), the founder evaluates:
+
+- Is the problem real? (Revisit Phase 1 research.)
+- Is the solution wrong? (Iterate on approach.)
+- Is the market wrong? (Pivot or expand audience.)
+- Is it time to sunset? (Remove from production, reduce costs, reallocate effort.)
+
+The default is to iterate (Deploy, Validate, Operate, Iterate), not to kill. Products are given multiple iteration cycles before a sunset decision. But cost-awareness is maintained — a product running at a loss with no improvement trajectory is paused, not left running indefinitely.
+
+**Outputs:**
+
+- Ongoing stable operation with monitoring.
+- Bugs fixed, features added through the standard lifecycle.
+- Periodic session debriefs documented in living document.
+- Clear-eyed evaluation of product viability at regular intervals.
+
+### 3.7 — The Lifecycle Applied to ARUSHAI Products
+
+Current product status mapped to lifecycle phases:
+
+- **TradeOS:** Phase 5 (Operate and Iterate) — S1 strategy in production on main branch, HAWK AI engine in active development on feature/hawk branch.
+- **Flint:** Phase 3-4 (Build transitioning to Deploy) — Multi-provider AI abstraction layer built, local testing and Vercel deployment pending.
+- **VIZBOARD:** Phase 3 (Build) — Product definition locked, CC prompts generated, build execution in progress.
 
 ---
 
