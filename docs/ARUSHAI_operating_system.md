@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.5.0 |
+| Version | 0.6.0 |
 | Last Updated | 2026-03-14 |
 | Author | Irfan |
-| Status | Sections 1-5 complete, Sections 6-8 scaffolded |
+| Status | Sections 1-6 complete, Sections 7-8 scaffolded |
 
 ---
 
@@ -586,9 +586,117 @@ Context loss between sessions is the single biggest productivity killer in the A
 
 ## Section 6 — The Financial Framework
 
-Cost tracking per product, budget thresholds and alerts, revenue tracking, the cost-quality tradeoff rule for AI model selection, and trading capital allocation rules. This section becomes the rulebook for the future Finance Agent.
+### 6.1 — Overview
 
-[TO BE COMPLETED]
+ARUSHAI operates lean. Every rupee and dollar spent must trace to a clear purpose. The company is pre-revenue on most products, which means cost discipline is not optional — it is survival. As products mature and generate revenue, the financial framework scales with them. But the habits established now compound into long-term financial health.
+
+Currently, ARUSHAI does not have a formal cost tracking system. Expenses are tracked mentally by the founder. This is a known gap. Building a structured cost tracking tool is on the roadmap — following the ARUSHAI dogfooding principle, this tool will be built for internal use first, then evaluated as a potential product.
+
+### 6.2 — The Dogfooding Principle
+
+Every product ARUSHAI builds starts as a solution to ARUSHAI's own problems. The company is user zero. Build it for self, test it internally, validate that it works, then productize when confident.
+
+This principle applies to all current and future products. It ensures that:
+
+- The problem is genuinely real (ARUSHAI experiences it firsthand).
+- The solution is battle-tested before any external user sees it.
+- The founder has deep, authentic understanding of the product because he uses it daily.
+- Feedback loops are immediate — bugs and gaps are felt, not reported.
+
+While established products exist in the market for most problems, having a homegrown solution gives ARUSHAI full ownership, deep understanding, and the confidence that comes from building and operating the tool end-to-end.
+
+### 6.3 — Current Cost Structure
+
+Monthly recurring costs as of the current operating state:
+
+**AI and Development:**
+
+- Anthropic Max Plan: ~$200/month (primary AI engine — web sessions, CC execution, future multi-agent).
+- Gemini Pro: ~$20-25/month (secondary AI subscription).
+- OpenRouter: ~$30-40 credit reserve (fallback provider, not recurring monthly spend).
+
+**Infrastructure:**
+
+- VPS (Rocky Linux, TradeOS hosting): ~$10-15/month.
+- Hostinger VPS (VIZBOARD hosting): cost to be confirmed.
+- Domain names and DNS: cost to be confirmed.
+- GitHub (private repos under arushai-hq/): current plan cost to be confirmed.
+
+**Trading:**
+
+- Zerodha KiteConnect subscription: INR 2,000/month.
+
+**Future costs (not yet active but anticipated):**
+
+- Supabase (Flint database and auth): free tier initially, paid tier when scaling.
+- Tailscale VPN (security and remote access): free tier currently, paid tier if needed.
+- Vercel (Flint deployment): free tier initially, paid tier when scaling.
+- Additional data providers or API subscriptions as products require.
+
+Estimated current monthly burn: approximately $250-280 USD + INR 2,000.
+
+### 6.4 — The Cost Optimization Principle
+
+Maximize the value extracted from subscriptions already being paid for before adding new costs.
+
+The Anthropic Max Plan at $200/month is the primary investment. All major AI workloads — strategic brainstorming, CC execution, and future multi-agent operations — should run through this subscription first. Only use secondary providers (OpenRouter, Gemini) when the Max Plan cannot fulfill a specific technical requirement.
+
+**AI model tiering for cost efficiency:**
+
+- **Expensive models (Opus-tier):** Reserved for strategic planning, complex architecture decisions, and FORGE sessions where reasoning depth matters most.
+- **Mid-tier models (Sonnet-tier):** Standard CC execution, feature builds, bug fixes — the workhorse.
+- **Cheap models (Haiku-tier):** Repetitive tasks, batch operations, simple formatting or generation tasks where speed matters more than depth.
+
+Never use the same model tier for everything. Match the model cost to the task complexity. A simple README update does not need the same model as a complex architecture brainstorm.
+
+### 6.5 — TradeOS Capital Framework
+
+**Current state:** Paper trading mode.
+
+- Total paper trading capital: INR 10,00,000 (INR 10 lakh).
+- S1 strategy allocation: 70% = INR 7,00,000.
+- Slot system: 4 slots at INR 1,75,000 each (paper mode).
+
+**Transition to live trading:**
+
+- Live trading will begin gradually after paper trading validation is complete.
+- Initial live capital: INR 2,00,000 to INR 3,00,000 (conservative start).
+- Capital increases based on demonstrated TradeOS performance — gradual scaling, not all-at-once deployment.
+- The principle: prove the system works with small capital, then scale. Never risk large capital on unproven strategies.
+
+**Risk limits:** [TO BE DEFINED — daily drawdown limits, monthly loss caps, and automatic system pause triggers will be established before transitioning from paper to live trading. These limits will be documented in TradeOS_context.md and enforced programmatically within TradeOS.]
+
+### 6.6 — Budget Thresholds and Alerts
+
+**Monthly AI spend ceiling:** The Anthropic Max Plan ($200/month) is the primary budget. Secondary provider spend (OpenRouter) should not exceed $40/month without explicit justification. Total AI spend should not exceed $270/month in the current phase.
+
+**Infrastructure spend ceiling:** Total hosting and infrastructure should not exceed $50/month in the current phase. Any new service subscription requires founder evaluation of whether it can stay on a free tier initially.
+
+**Trading capital:** Governed by TradeOS risk limits (Section 6.5). Capital allocation changes require founder approval (per Section 2.2, Financial decisions).
+
+**Alert thresholds:**
+
+- At 80% of any monthly budget category: warning. Review whether spend is justified.
+- At 100% of any monthly budget category: pause and evaluate. No additional spend without explicit decision.
+
+These thresholds are initial and will be revised as products generate revenue. The goal is to move from cost management to investment management — spending more where returns are demonstrated.
+
+### 6.7 — Revenue Tracking
+
+**Current revenue sources:**
+
+- **TradeOS:** Trading profit and loss per strategy (not yet active — paper trading phase).
+- **Flint:** Subscription revenue via Stripe (not yet launched).
+- **VIZBOARD:** Internal tool, no direct revenue.
+
+As products launch and generate revenue, this section will be expanded with:
+
+- Revenue per product per month.
+- Cost-to-revenue ratio per product.
+- Break-even targets.
+- Reinvestment allocation (how much revenue flows back into ARUSHAI vs founder income).
+
+The financial goal: Each product should individually justify its costs within 3-6 months of launch. Products that consistently cost more than they generate (or more than the strategic value they provide) are evaluated under the Product Survival Criteria (Section 3.6).
 
 ---
 
