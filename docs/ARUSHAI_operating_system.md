@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.3.0 |
+| Version | 0.4.0 |
 | Last Updated | 2026-03-14 |
 | Author | Irfan |
-| Status | Sections 1-3 complete, Sections 4-8 scaffolded |
+| Status | Sections 1-4 complete, Sections 5-8 scaffolded |
 
 ---
 
@@ -367,9 +367,105 @@ Current product status mapped to lifecycle phases:
 
 ## Section 4 — The CC Interaction Protocol
 
-The rules governing how the founder interacts with Claude Code. Covers the web session vs CC separation, the CC prompt template, branch discipline, documentation discipline, quality gates, and the no-code-in-prompts rule. This section is directly translatable into CLAUDE.md files for each product repo.
+### 4.1 — Overview
 
-[TO BE COMPLETED]
+All ARUSHAI code is written by Claude Code (CC). The founder never writes code directly. The founder's role is strategic: brainstorm, plan, decide, and generate instruction-only prompts. CC's role is execution: write code, run tests, manage git, update documentation.
+
+This separation is non-negotiable. It scales — the founder's thinking time is the bottleneck, not coding speed. As ARUSHAI grows, the same protocol extends to multiple CC sessions and future AI agents.
+
+### 4.2 — The Two-Layer System
+
+ARUSHAI operates on two layers that never mix:
+
+**Layer 1 — Web Session (Claude.ai / Claude Web):** This is the brainstorming and orchestration layer. Used for strategic planning, research (FORGE sessions), architecture decisions, CC prompt generation, and session debriefs. The web session acts as the founder's thinking partner — it challenges assumptions, gathers evidence, structures decisions, and translates raw ideas into actionable CC prompts. The web session never generates actual code.
+
+**Layer 2 — Claude Code (CC):** This is the execution layer. Primary environment is Antigravity; CC CLI is the secondary environment. CC receives instruction-only prompts and writes all code, tests, documentation, and git operations. CC has its own skills and project context (CLAUDE.md, .claude/skills/) to determine implementation details. CC never makes strategic or architectural decisions — it executes within the boundaries defined by its prompts and project configuration.
+
+**The boundary:** The web session decides WHAT to build and WHY. CC decides HOW to implement it. This boundary is strict. If the web session starts writing code, it has crossed the line. If CC starts making product decisions, it has crossed the line.
+
+### 4.3 — The CC Prompt Standard
+
+Every CC prompt follows this exact structure. No exceptions.
+
+**Structure:**
+
+- **Branch:** Always explicit. Never assume the current branch. State the branch name and include checkout command if needed. Active branches must be known (e.g., main for production, feature/hawk for development).
+- **Skills to activate:** List project-level skills that are relevant to the task.
+- **Context:** Reference the product living document or OSD section that provides background. CC should read this before starting work.
+- **What to build:** Intent, requirements, and constraints described in plain language. This is the WHAT and WHY, never the HOW. No code blocks, no function bodies, no implementation details. CC has skills and project context to determine implementation.
+- **Acceptance criteria:** Measurable outcomes that define "done." These are what the founder reviews against after CC delivers.
+- **Do not:** Explicit exclusions — things CC must avoid. Prevents scope creep and unintended changes.
+- **When done:** Post-completion actions. Always includes: update README.md, update living document, run tests, commit with descriptive message, push to branch.
+
+**Rules:**
+
+- Never include actual code in a CC prompt — not even as examples or hints. CC writes code using its own skills.
+- Every prompt must specify the git branch. If the branch does not exist, include branch creation in the prompt.
+- Keep prompts token-efficient. Do not restate what CC already knows from its CLAUDE.md and project skills.
+- One prompt per logical unit of work. Do not overload a single prompt with unrelated tasks.
+
+### 4.4 — The Branch Discipline
+
+All ARUSHAI repos follow this branching model:
+
+- **main:** Production branch. Never commit directly. All changes arrive via merge from feature or fix branches.
+- **feature/[name]:** Active feature development. One branch per feature or major work item.
+- **fix/[name]:** Bug fix branches. One branch per bug or related bug batch.
+
+CC handles ALL git operations — branch creation, commits, merges, pushes. The web session never gives raw git commands to the founder. The only exception: VPS-specific manual commands (git pull, tradeos CLI, docker commands) that CC cannot execute remotely — these are given directly to the founder with clear instructions.
+
+**Commit discipline:**
+
+- Batch related changes into a single commit.
+- Separate architecturally distinct changes into their own commits.
+- Commit messages are descriptive and follow the format: type(scope): description (e.g., feat(execution): add trailing stop loss manager, fix(session): resolve ghost position from exit fill processing).
+
+### 4.5 — The Documentation Discipline
+
+Documentation is not optional. It is part of every CC prompt's "When done" section.
+
+**README.md:** Must be kept up to date with every feature addition. Every CC prompt includes a requirement to update README.md with new commands, features, and current project status.
+
+**Living Document ([Product]_context.md):** The single source of truth for each product, stored at the repo root. Updated after every concluded discussion or build cycle. Structure: Current state, Active work, On the horizon, Key learnings, Tools and resources.
+
+**Context Archive (docs/context_archive.md):** Resolved TODOs and old session log rows move here after defined thresholds. This keeps the living document focused on current state while preserving history.
+
+**CLAUDE.md:** Defines CC's role, boundaries, coding conventions, and project-specific rules for each repo. Must be kept current as the project evolves. CC updates CLAUDE.md as part of prompts that change project conventions or add new tools.
+
+### 4.6 — The Skill Installation Protocol
+
+Every new ARUSHAI repo must have appropriate skills installed at project level before any build work begins.
+
+Skills are .claude/skills/[skill-name]/SKILL.md files within the repo. They are project-level, version-controlled, and travel with the codebase.
+
+**Selection criteria:** Skills are chosen based on the repo's primary purpose. Documentation repos get documentation skills. Code repos get framework-specific skills. Hybrid repos get both. Never install skills irrelevant to the repo's purpose — excess skills pollute CC's context and waste tokens.
+
+**Primary source:** Anthropic official skills repository (anthropics/skills). Custom ARUSHAI skills are maintained in arushai-hq/arushai-os and deployed to individual repos as needed.
+
+When evaluating skills from community sources: assess relevance, quality, maintenance status, and token cost before installing. Prefer fewer, high-quality skills over many generic ones.
+
+### 4.7 — The Quality Gate
+
+No code merges to main without meeting these criteria:
+
+- All acceptance criteria from the CC prompt are satisfied.
+- Full test suite passes with zero failures.
+- No known regressions introduced.
+- README.md is updated.
+- Living document is updated.
+- CLAUDE.md is current (if project conventions changed).
+
+The benchmark standard is TradeOS: 340+ tests, zero failures. Every ARUSHAI product aspires to this level of test coverage and stability.
+
+### 4.8 — Session Continuity
+
+Long CC sessions risk context window exhaustion. The protocol for managing this:
+
+- When approaching context limits in a web session: proactively create a handoff document and start a new session. Do not lose continuity by letting the session die.
+- Handoff includes: what was decided, what is in progress, what is blocked, what comes next.
+- For session recovery: recent_chats with higher n value is more reliable than conversation_search for retrieving session-level context by title.
+- When context-mode is installed on a project: use the --continue flag when resuming multi-session builds to carry forward indexed context. Without --continue, previous session data is deleted.
+- The living document is the ultimate fallback for session continuity. If all else fails, the living document has the current state.
 
 ---
 
