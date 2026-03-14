@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.4.0 |
+| Version | 0.5.0 |
 | Last Updated | 2026-03-14 |
 | Author | Irfan |
-| Status | Sections 1-4 complete, Sections 5-8 scaffolded |
+| Status | Sections 1-5 complete, Sections 6-8 scaffolded |
 
 ---
 
@@ -471,9 +471,116 @@ Long CC sessions risk context window exhaustion. The protocol for managing this:
 
 ## Section 5 — The Context Management System
 
-How knowledge flows through the organization. Covers the living document pattern, session continuity protocol, knowledge hierarchy (company, product, session, execution), the FORGE session pattern for research, and context archival rules.
+### 5.1 — Overview
 
-[TO BE COMPLETED]
+Context is the lifeblood of ARUSHAI's AI-augmented operating model. Every decision, every build, every iteration depends on the right context being available at the right time. Without structured context management, knowledge gets lost between sessions, decisions get re-made, and CC wastes tokens re-learning what it already knew.
+
+The context management system defines how knowledge flows through the organization: how it is created, where it is stored, how it is retrieved, and when it is archived.
+
+### 5.2 — The Knowledge Hierarchy
+
+ARUSHAI's knowledge is organized in four layers, from broadest to most specific:
+
+**Level 1 — Company Level:** The ARUSHAI Operating System Document (this document), stored in arushai-hq/arushai-os. Defines how the entire company operates. Referenced by all products and all agents. Changes rarely — only when company-level processes or strategy evolve.
+
+**Level 2 — Product Level:** The product living document ([Product]_context.md) at each repo root. Defines the current state, active work, roadmap, key learnings, and tools for a specific product. Changes frequently — updated after every concluded discussion or build cycle. This is the single source of truth for each product.
+
+**Level 3 — Session Level:** Claude memory and conversation history in web sessions. Contains the working context of the current brainstorming or planning session. Ephemeral by nature — persists only within the session and through Claude's memory system across sessions.
+
+**Level 4 — Execution Level:** CLAUDE.md and .claude/skills/ within each repo. Defines CC's role, boundaries, conventions, and capabilities for a specific project. This is the context CC loads at the start of every session. Changes when project conventions evolve or new skills are added.
+
+**The rule:** Higher levels inform lower levels, never the reverse. The OSD shapes product living documents. Product living documents shape CLAUDE.md and skills. Session context is temporary and must be consolidated into the appropriate permanent layer before it is lost.
+
+### 5.3 — The Living Document Pattern
+
+Every ARUSHAI product has a living document at its repo root: [Product]_context.md (e.g., TradeOS_context.md).
+
+**Purpose:** The single source of truth for the product's current state. When a new session begins — whether web session or CC session — the living document is the first thing read to establish context.
+
+**Structure:**
+
+- **Purpose and context:** What this product is and what stage it is at.
+- **Current state:** What has been built, what is deployed, what is working.
+- **Active work:** What is currently in progress, including branch names and status.
+- **On the horizon:** Planned features, deferred items, future considerations.
+- **Key learnings and principles:** Hard-won lessons, permanent rules, bug patterns to watch for.
+- **Tools and resources:** Infrastructure, APIs, dependencies, and development tools in use.
+
+**Update Protocol:**
+
+- Every concluded discussion in a web session triggers a CC prompt to apply a delta update to the living document before moving on.
+- Updates are additive — add what is new, modify what has changed, do not rewrite the entire document.
+- The living document reflects reality, not aspiration. If something is not built yet, it belongs in "On the horizon," not "Current state."
+
+### 5.4 — The Context Archive
+
+As living documents grow, resolved items and old session history accumulate and clutter the current view. The context archive solves this.
+
+**Location:** docs/context_archive.md within each product repo.
+
+**What moves to the archive:**
+
+- Resolved TODOs and completed work items.
+- Old session log rows after the session debrief is complete.
+- Bug descriptions after bugs are fixed and verified.
+- Superseded decisions (with a note about what replaced them).
+
+**When to archive:** After defined thresholds — when the living document becomes unwieldy or when a natural milestone is reached (e.g., end of a session series, major release).
+
+The archive preserves history without cluttering the active working document. If a question arises about past decisions, the archive is searchable. But the living document remains focused on the present and immediate future.
+
+### 5.5 — The FORGE Session Pattern
+
+FORGE (Foundations of Reasoning, Grounding and Engineering) sessions are deep-dive research and brainstorming sessions conducted in web sessions. They are used for foundational knowledge gathering that informs product decisions, architecture choices, or company strategy.
+
+**Characteristics of a FORGE session:**
+
+- Assigned a unique session ID (e.g., ARUSHAI-FORGE-001).
+- Conducted as a dedicated web session with deep research.
+- Web search and evidence gathering are mandatory — every claim must be backed by verifiable sources.
+- No implementation during a FORGE session — it is pure research and planning.
+- Outputs are synthesized into a structured summary for long-term reference.
+
+**FORGE Session Outputs:**
+
+- Session summary stored in arushai-hq/arushai-os/docs/forge-sessions/ with filename FORGE-[NNN]-summary.md.
+- Summary structure: Session ID, Date, Topic, Key Findings (with source references), Repos Discovered (with stars, URLs, one-line descriptions), Decisions Made, Open Questions, Connection to OSD Sections.
+- Key repos, tools, and resources bookmarked in Claude memory for future reference.
+- If findings impact specific OSD sections or product living documents, those updates are noted and queued.
+
+FORGE sessions are numbered sequentially. The current session (FORGE-001) established the foundational AI agent engineering knowledge base covering seven pillars: Agent Architecture, Reasoning Frameworks, Grounding and Hallucination Mitigation, Memory Architecture, Tool Use and MCP, Guardrails Evaluation and Observability, and Multi-Agent Orchestration.
+
+### 5.6 — Session Continuity Protocol
+
+Context loss between sessions is the single biggest productivity killer in the AI-augmented workflow. The continuity protocol prevents this.
+
+**Within a web session:**
+
+- When approaching context limits, proactively create a handoff document before the session ends. Do not let the session die without capturing state.
+- Handoff document includes: what was decided, what is in progress, what is blocked, what comes next, and any open questions.
+- Update the product living document with any decisions or context generated during the session before ending.
+
+**Between web sessions:**
+
+- Claude's memory system carries key facts across sessions automatically.
+- For session recovery, recent_chats with higher n value is more reliable than conversation_search for retrieving session-level context by title.
+- The living document is the ultimate fallback. If memory is incomplete and chat history is unclear, the living document has the authoritative current state.
+
+**Within CC sessions:**
+
+- When context-mode is installed on a project, use the --continue flag to carry forward indexed context from the previous session. Without --continue, previous session data is deleted and the session starts fresh.
+- CLAUDE.md and project skills provide baseline context that persists regardless of session state.
+- For multi-session builds, the living document captures what was completed in each session so the next session can pick up without re-explanation.
+
+**The principle:** No session should end without its knowledge being captured somewhere permanent. Conversations are ephemeral. Documents are durable.
+
+### 5.7 — Context Hygiene Rules
+
+- Never let a living document become stale. If the document says "in progress" but the work finished two weeks ago, the document is lying. Update it.
+- Never duplicate context across multiple documents. Each fact lives in one authoritative location. Other documents reference it, they do not copy it.
+- Never let session context remain only in chat history. If it matters, it belongs in a document.
+- Archive aggressively. A living document cluttered with resolved items is harder to use than one that is lean and current.
+- Treat context like code: it has a lifecycle (create, use, update, archive), it needs maintenance, and it degrades if neglected.
 
 ---
 
