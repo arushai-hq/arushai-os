@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.7.0 |
+| Version | 1.0.0 |
 | Last Updated | 2026-03-14 |
 | Author | Irfan |
-| Status | Sections 1-7 complete, Section 8 scaffolded |
+| Status | Complete — all 8 sections written. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -845,6 +845,161 @@ When something goes wrong — and eventually it will — the response follows th
 
 ## Section 8 — The Evolution Roadmap
 
-Maps the five stages from solo developer to AI-operated organization: Stage 0 (Human Orchestrator), Stage 1 (Formalize OS), Stage 2 (Extend CC), Stage 3 (First AI Hires), Stage 4 (Orchestration Layer), Stage 5 (One-Person Multi-Million Org). Includes stage transition criteria and metrics to track.
+### 8.1 — Overview
 
-[TO BE COMPLETED]
+ARUSHAI's long-term vision is a one-person multi-million organization where the founder operates as the board of directors and AI agents handle execution across all domains. This is not achieved in one leap. It is a deliberate, staged progression where each stage builds on the foundation of the previous one. No stage is skipped.
+
+The roadmap defines five stages, from the current state (solo developer with AI-assisted coding) to the target state (AI-operated organization with human governance). Each stage has defined characteristics, prerequisites for entry, and criteria for transition to the next stage.
+
+### 8.2 — Stage 0: The Human Orchestrator (Completed)
+
+**Description:** The founder does everything — decides what to build, how to build it, and manually manages all context and operations. AI is used as a coding assistant but the founder holds all context in their head and drives all decisions manually.
+
+**Characteristics:**
+
+- Single person handling all roles: product manager, architect, developer, tester, deployer, operator.
+- AI used for code generation (CC) but not for planning, research, or orchestration.
+- No formal operating processes documented.
+- Context lives in the founder's memory and scattered notes.
+
+**Why this stage was limiting:** Every context switch costs mental energy. Knowledge gets lost between sessions. The founder's hours in the day are the hard ceiling on output. This model works for one product but breaks at scale.
+
+**Status:** Completed. ARUSHAI has moved beyond this stage by establishing the two-layer system (web session for planning, CC for execution) and beginning to formalize operating processes.
+
+### 8.3 — Stage 1: Formalize the Operating System (Current Stage)
+
+**Description:** Document the implicit processes, decision rules, and operating protocols that currently exist only in the founder's head. Create the company constitution that all future agents and systems will operate under.
+
+**Characteristics:**
+
+- The ARUSHAI Operating System Document (this document) is created and maintained.
+- All operating processes are written down: decision-making, product lifecycle, CC interaction, context management, financial framework, security governance.
+- The founder's instincts and rules are translated into structured, referenceable protocols.
+- The two-layer system (web session + CC) is formalized and consistently followed.
+
+**Key Deliverable:** This document — the ARUSHAI Operating System Document — complete with all 8 sections.
+
+**Transition Criteria to Stage 2:**
+
+- OSD is complete and actively referenced in daily work.
+- All active product repos have living documents, CLAUDE.md, and project-level skills.
+- The founder consistently follows the documented processes (not just has them written down).
+- The CC Interaction Protocol is second nature — prompts follow the standard format every time.
+
+### 8.4 — Stage 2: Extend the CC Layer (Next Stage)
+
+**Description:** Before adding new agents, make the existing executor (CC) dramatically more capable. Maximize what a single, well-configured agent can accomplish.
+
+**Characteristics:**
+
+- context-mode installed on all active projects for context window optimization and session continuity.
+- Comprehensive project-level skills built for each product, encoding architecture patterns, conventions, and domain knowledge.
+- CLAUDE.md files are thorough and current across all repos — CC can start a session and understand the project without re-explanation.
+- CC sessions are longer, more productive, and require less founder intervention mid-session.
+
+**Key Activities:**
+
+- Install context-mode on TradeOS first (highest value due to long sessions and multiple MCP servers), then Flint and VIZBOARD.
+- Build product-specific custom skills that encode each project's architecture decisions, coding patterns, and domain rules.
+- Ensure every repo has a comprehensive CLAUDE.md that fully describes CC's role and boundaries.
+- Evaluate and install relevant community skills where they add value without bloating context.
+
+**Transition Criteria to Stage 3:**
+
+- All repos have context-mode, comprehensive skills, and thorough CLAUDE.md files.
+- CC can handle full build sessions with minimal mid-session re-explanation by the founder.
+- The founder's bottleneck has shifted from "CC doesn't understand the context" to "I don't have enough hours for planning and review."
+
+### 8.5 — Stage 3: First AI Agent Hires (Future)
+
+**Description:** The founder's planning, research, and review time becomes the bottleneck. AI agents are introduced for non-coding roles to extend the founder's capacity.
+
+**Characteristics:**
+
+- Specialized agents handle work that currently consumes the founder's time but is not coding.
+- Each agent has a defined role, tools (via MCP servers), budget limit, output format, and reporting cadence.
+- The founder remains the sole decision-maker — agents propose, the founder approves.
+- Agents operate independently and report to the founder directly.
+
+**First Three Hires (in priority order):**
+
+**Hire 1 — Research Agent:** Monitors domains relevant to ARUSHAI (trading strategies, AI developments, competitor products). Summarizes findings into decision-ready briefs. Runs continuous versions of what FORGE sessions do manually today.
+
+**Hire 2 — QA/Review Agent:** Reviews CC output after each build step. Runs tests, checks for regressions, validates against acceptance criteria from CC prompts. Replaces the manual "did CC do what I asked" verification loop.
+
+**Hire 3 — Documentation/Context Agent:** Automatically updates living documents, README files, and context archives after completed build steps. Watches for completed work and applies delta updates without waiting for a manual CC prompt.
+
+**Transition Criteria to Stage 4:**
+
+- Three or more agents running successfully for 30+ days.
+- Agents are delivering measurable time savings (hours saved per week tracked).
+- Coordination between agents becomes the new bottleneck — the founder spends more time managing agents than managing products.
+
+### 8.6 — Stage 4: The Orchestration Layer (Future)
+
+**Description:** Multiple agents require coordination. A control plane is introduced to manage goals, budgets, approvals, and inter-agent communication.
+
+**Characteristics:**
+
+- Goal hierarchy: every task traces to a product goal, every product goal traces to the ARUSHAI company mission.
+- Budget enforcement: each agent has a monthly token/cost budget with automatic pause at limit.
+- Approval gates: certain actions require founder approval before execution (per Section 7.5).
+- Audit trail: every agent action is logged, traceable, and reviewable.
+- Board meeting: regular automated report summarizing what each agent accomplished, product status, decisions needing input, and total cost.
+
+**Key Concepts (informed by FORGE-001 research):**
+
+- The Paperclip pattern: org charts, budgets, goals, governance for AI agent teams.
+- MCP for tool access, A2A for agent-to-agent communication if cross-framework interoperability is needed.
+- Observability stack: structured tracing, evaluation metrics, and monitoring dashboards (per Pillar 6 knowledge base).
+
+The founder's role shifts: from managing individual tasks to managing the system that manages tasks. Daily interaction becomes reviewing the board brief, approving escalated decisions, and setting strategic direction.
+
+**Transition Criteria to Stage 5:**
+
+- Orchestration layer is running and stable.
+- The founder spends less than 4 hours per day in direct operational management.
+- Products are generating revenue.
+- Agent operations are cost-positive (the value agents create exceeds their cost to run).
+
+### 8.7 — Stage 5: The One-Person Multi-Million Organization (Vision)
+
+**Description:** The fully realized ARUSHAI vision. The founder operates as the board of directors. AI agents handle all execution across technical, product, marketing, finance, and operations domains.
+
+**Characteristics:**
+
+- The founder spends 2-4 hours per day in "board mode" — reviewing reports, approving high-stakes decisions, setting new goals, and pursuing strategic opportunities.
+- AI CTO oversees all technical agents, plans architecture, reviews code quality, manages technical debt.
+- AI Product Manager monitors user feedback, tracks feature requests, prioritizes backlog based on business goals.
+- AI Marketing/Growth Agent handles content creation, SEO, user acquisition.
+- AI Finance Agent tracks revenue, costs, budget allocation, and generates financial reports.
+- AI QA/Security Agent runs continuous testing, security scanning, and deployment validation.
+- Multiple CC executor agents assigned to specific products, managed by the CTO agent.
+
+**Operating model:** Human-on-the-loop. Agents operate autonomously for routine decisions. Edge cases and high-stakes decisions escalate to the founder. Monitoring dashboards provide real-time visibility. The founder intervenes when needed, not on every action.
+
+**Revenue model:** Multiple products generating recurring revenue. Trading profits from TradeOS. SaaS subscriptions from Flint and future products. Each product individually cost-positive. Total organization revenue in the multi-million range.
+
+**The expansion potential:** Once the AI-operated model is proven with technology products, the same orchestration framework can be applied to new domains — agriculture, import-export, services — fulfilling the ARUSHAI Systems vision of a multi-generational platform that is not limited to any single industry.
+
+### 8.8 — Current Position and Metrics
+
+**Current stage:** Stage 1 (Formalize the Operating System) — in progress, nearing completion with this document.
+
+**Metrics to track across all stages:**
+
+- Hours saved per week (compared to fully manual operation).
+- CC sessions completed without context loss or re-explanation.
+- Cost per feature shipped (tokens + time).
+- Test coverage and failure rate across products.
+- Time from idea to deployed feature (cycle time).
+- Monthly burn rate vs monthly revenue (when applicable).
+- Number of autonomous agent actions vs escalated actions (Stage 3+).
+
+These metrics are not yet formally tracked. Establishing measurement is part of Stage 2 maturity.
+
+### 8.9 — The Guiding Principle
+
+Each stage must be solid before the next begins. A poorly documented operating system (Stage 1) means agents in Stage 3 will make wrong decisions because they are following incomplete rules. A weak CC configuration (Stage 2) means the founder wastes time re-explaining context that skills should have handled. A rushed orchestration layer (Stage 4) means agents coordinate poorly and create more problems than they solve.
+
+The Nemawashi principle applies to the company evolution itself: plan each stage thoroughly, validate it works, then move to the next. Speed comes from doing each stage right the first time, not from skipping stages.
