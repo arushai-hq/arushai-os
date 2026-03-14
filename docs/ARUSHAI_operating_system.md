@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.6.0 |
+| Version | 0.7.0 |
 | Last Updated | 2026-03-14 |
 | Author | Irfan |
-| Status | Sections 1-6 complete, Sections 7-8 scaffolded |
+| Status | Sections 1-7 complete, Section 8 scaffolded |
 
 ---
 
@@ -702,9 +702,144 @@ The financial goal: Each product should individually justify its costs within 3-
 
 ## Section 7 — The Security and Governance Framework
 
-Secret management, access control per agent, audit trail requirements, the company-wide "Do Not" list, and irreversible action approval gates. This section becomes the guardrails layer for every agent in the organization.
+### 7.1 — Overview
 
-[TO BE COMPLETED]
+Security is the one thing ARUSHAI never compromises. Not for speed, not for convenience, not for cost savings. A security breach can destroy trust, lose money, and set back years of work in a single incident. Every other feature, optimization, or convenience is secondary to security.
+
+This framework starts with what can be enforced today (single operator, manual processes) and defines the path toward automated enforcement as the company matures through the Stage progression. The principles are permanent. The implementation evolves.
+
+### 7.2 — The Security-First Principle
+
+Every decision at ARUSHAI is evaluated through a security lens before any other consideration:
+
+- When choosing between a faster approach and a more secure approach, choose secure.
+- When adding a new tool, service, or integration, evaluate its security implications before evaluating its features.
+- When an AI agent (future Stage 3+) proposes an action, the system checks security constraints before checking business logic.
+- When in doubt about whether something is secure enough, assume it is not and investigate.
+
+Security is not a feature to be added later. It is a foundation built from day one that everything else sits on top of.
+
+### 7.3 — Secret Management
+
+API keys, tokens, passwords, and credentials are the most sensitive assets in the organization. Their handling follows strict rules.
+
+**Rules:**
+
+- API keys and secrets are NEVER committed to code repositories. Not in source files, not in comments, not in commit messages, not in documentation.
+- All secrets are stored in environment variables on the deployment target (VPS, local machine, CI environment).
+- CC prompts reference environment variable names, never actual secret values. Example: "Use the ZERODHA_API_KEY environment variable" — never the actual key.
+- Different API keys for different environments: development, staging (when applicable), and production. A development key leak should never compromise production.
+- Secret rotation: API keys and tokens should be rotated periodically and immediately if a potential exposure is suspected. Rotation schedule to be defined as the security posture matures.
+- No secrets in logs, error messages, or monitoring output. If a log line could contain a secret, it must be redacted before writing.
+
+**Current implementation:** Environment variables on VPS (TradeOS), .env files locally (gitignored). As the company grows, a dedicated secret management solution (e.g., HashiCorp Vault, cloud provider secret managers) will be evaluated.
+
+### 7.4 — Access Control
+
+Who (and what) can access which systems, and with what permissions.
+
+**Current state (single operator):**
+
+- The founder has full access to all systems: VPS, GitHub repos, API accounts, databases.
+- CC operates within the boundaries defined by CLAUDE.md and project skills — it cannot access systems not explicitly provided to it.
+- No shared accounts or shared credentials.
+
+**Future state (Stage 3+ with AI agents):**
+
+- Each AI agent gets the minimum permissions required to do its job (principle of least privilege).
+- Read-only access is the default. Write access is granted only for specific, defined operations.
+- Agents that access data should not be the same agents that take irreversible actions (separation of concerns).
+- Access permissions are defined in the agent's configuration and enforced by the orchestration layer.
+- Permission changes require founder approval.
+
+**Infrastructure access:**
+
+- VPS access via SSH with key-based authentication (no password authentication).
+- GitHub repos are private under the arushai-hq organization.
+- Database access restricted to application-level credentials, not root access for routine operations.
+
+### 7.5 — The Irreversible Action Gate
+
+Certain actions cannot be undone. These actions always require explicit founder approval, regardless of who or what initiates them.
+
+**Irreversible actions (always require human approval):**
+
+- Production deployments (deploying code to live VPS, Vercel, or any production environment).
+- Trade execution (placing real-money trades via Zerodha — once live trading begins).
+- Data deletion (dropping tables, deleting records, removing files from production).
+- User-facing communications (sending emails, notifications, or messages on behalf of ARUSHAI to customers or external parties).
+- Infrastructure changes (server provisioning, DNS changes, SSL certificate changes).
+- API key rotation or credential changes in production.
+- Merging to the main branch (until CI/CD automation is in place with proper gates).
+
+**The protocol for irreversible actions:**
+
+- The agent or CC prepares the action and presents it for review.
+- The founder reviews the action, its scope, and its potential impact.
+- The founder explicitly approves or rejects.
+- Only after approval does execution proceed.
+- The action is logged in the audit trail with timestamp, what was done, and who approved.
+
+As the company matures and CI/CD pipelines are established, some of these gates can be automated (e.g., production deployment via pipeline with all tests passing) — but the automation itself requires founder approval to set up, and the audit trail remains mandatory.
+
+### 7.6 — The CI/CD Security Vision
+
+Currently, deployments are manual (git pull on VPS, manual Vercel deploys). This is acceptable for the current stage but does not scale. The target architecture:
+
+**Phase 1 (Current):** Manual deployment by founder. CC prepares the code, founder deploys after review.
+
+**Phase 2 (Near-term):** Automated CI pipeline. Every push to a feature branch triggers automated tests. Test failures block the merge. Test results are visible before any merge decision.
+
+**Phase 3 (Target):** Full CI/CD with security gates. Automated test suite runs on every push. Code quality checks (linting, type checking) enforced. Security scanning for known vulnerabilities in dependencies. Deployment to production only from main branch, only after all checks pass. Deployment requires either founder approval or meets pre-defined automated criteria (all tests pass, no security warnings, no new critical dependencies).
+
+The principle: No manual step should be the only thing standing between untested code and production. Automation provides consistency that human attention cannot sustain at scale. But automation without proper gates is more dangerous than manual processes.
+
+### 7.7 — Audit Trail Requirements
+
+Every significant action in the ARUSHAI ecosystem must be traceable. If something goes wrong, the audit trail answers: what happened, when, who or what did it, and why.
+
+**What must be logged:**
+
+- Every production deployment: what was deployed, from which branch, which commit, when, who approved.
+- Every trade executed by TradeOS: strategy, instrument, entry/exit, P&L, timestamp.
+- Every CC session: what was built, which prompts were used, what changed.
+- Every agent action (Stage 3+): what the agent did, which tools it called, what data it accessed, what decisions it made.
+- Every security-relevant event: login attempts, API key usage, permission changes, failed operations.
+
+**Where audit logs live:**
+
+- TradeOS: Trade logs in TimescaleDB, session reports via CLI, Telegram notifications.
+- Product repos: Git history serves as the code audit trail (commit messages, branch history).
+- Future agent operations: Dedicated logging with structured traces per the observability framework.
+
+**Retention:** Audit logs are never deleted. They may be archived after defined periods, but they remain accessible. In regulated domains (financial trading), retention requirements may be legally mandated.
+
+### 7.8 — The Company-Wide "Do Not" List
+
+These rules apply to every person, every CC session, every AI agent, every system in ARUSHAI. No exceptions.
+
+- Never deploy during active trading hours (TradeOS — 9:15 AM to 3:30 PM IST on market days).
+- Never commit directly to the main branch — all changes go through feature or fix branches.
+- Never expose API keys, tokens, or credentials in code, logs, documentation, or prompts.
+- Never make financial decisions (spend, invest, allocate) without founder approval.
+- Never delete production data without verified backup.
+- Never skip the test suite before merging to main.
+- Never deploy code that has not been reviewed against acceptance criteria.
+- Never store user data (when applicable) without encryption at rest.
+- Never use shared credentials between different systems or environments.
+- Never trust raw input from any external source (user input, API responses, tool results) without validation.
+
+### 7.9 — Incident Response Protocol
+
+When something goes wrong — and eventually it will — the response follows this sequence:
+
+- **Detect:** Monitoring alerts, missing notifications, or manual observation identifies the issue.
+- **Contain:** Immediately limit the blast radius. If a service is misbehaving, pause it. If an agent is acting incorrectly, stop it. Do not let damage compound while investigating.
+- **Diagnose:** Check logs, audit trail, and recent changes. What changed? When? Was there a recent deployment, configuration change, or external factor?
+- **Fix:** Apply the minimum necessary fix to restore normal operation. This is not the time for refactoring — stabilize first.
+- **Verify:** Confirm the fix works. Run tests. Check monitoring. Ensure the incident is actually resolved, not just masked.
+- **Document:** Record what happened, when, root cause, what was done to fix it, and what will prevent recurrence. Add to the product living document and, if applicable, add new test cases.
+- **Improve:** If the incident revealed a gap in monitoring, testing, or process — close that gap. Every incident should result in the system being more resilient than before.
 
 ---
 
