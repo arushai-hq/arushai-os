@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.1.0 |
+| Version | 0.2.0 |
 | Last Updated | 2026-03-14 |
 | Author | Irfan |
-| Status | Section 1 complete, Sections 2-8 scaffolded |
+| Status | Sections 1-2 complete, Sections 3-8 scaffolded |
 
 ---
 
@@ -83,9 +83,134 @@ Build a multi-generational wealth platform from the ground up. ARUSHAI is not a 
 
 ## Section 2 — The Decision-Making Framework
 
-Defines the Nemawashi Protocol, decision classification (strategic/tactical/operational/financial), escalation triggers, and the boundary between human decisions and AI-delegated decisions. This section is the rulebook for how every decision in ARUSHAI gets made — from product strategy to daily execution.
+### 2.1 — The Nemawashi Protocol
 
-[TO BE COMPLETED]
+Every significant decision at ARUSHAI follows the Nemawashi principle: deep planning before any implementation begins.
+
+The ratio: 60-70% planning, 30-40% implementation. Planning is considered complete not by a checklist but by a judgment call — when the founder can see enough of the big picture with sufficient detail to define an MVP, it is time to move from brainstorming to building.
+
+**Nemawashi Completion Signals:**
+
+- The problem is clearly defined and validated.
+- The architecture or approach has been explored with alternatives considered.
+- Edge cases and risks have been identified (not necessarily all solved, but acknowledged).
+- An MVP scope is visible — the minimum version that tests whether the brainstorming holds up in reality.
+- The founder has the conviction that the direction is clear enough to start building.
+
+**The MVP Bridge:** Nemawashi does not mean planning everything to 100%. It means planning enough to build an MVP that validates the thinking. The cycle is: Brainstorm, build MVP, learn from reality, refine, build more. Real-world feedback from an MVP is worth more than additional theoretical planning.
+
+**What Nemawashi looks like in practice:**
+
+- Web session deep-dive with research, evidence gathering, and structured analysis.
+- Alternatives compared (frameworks, approaches, architectures).
+- Decision locked with rationale documented.
+- CC prompt generated only after the decision is locked.
+- Living document updated with the decision and context before moving on.
+
+### 2.2 — Decision Classification
+
+Every decision falls into one of four categories. The category determines who makes it and how.
+
+**STRATEGIC (Founder only — never delegated):**
+
+- New product decisions (what to build, for whom, why).
+- Architecture overhauls or major technology changes.
+- Market positioning and pricing.
+- Company direction and expansion into new domains.
+- Partnership and business development decisions.
+- Capital allocation between products.
+
+Process: Always requires a dedicated web session brainstorm. Always documented in OSD or product living document. No time pressure — take the time needed to get it right.
+
+**TACTICAL (Founder decides, AI agents can propose):**
+
+- Feature prioritization within a product.
+- Sprint planning and task sequencing.
+- Technology selection within an established architecture (which library, which tool).
+- Bug severity classification and triage priority.
+
+Process: Can be decided in a web session or during CC prompt preparation. AI agents (Stage 3+) may recommend, but the founder approves.
+
+**OPERATIONAL (Fully delegated to CC/agents):**
+
+- Code implementation details (naming, structure, patterns).
+- Test writing and test strategy within established quality standards.
+- Git operations (commits, branches, merges).
+- Documentation updates following established templates.
+- Routine dependency updates.
+
+Process: CC and future agents handle these autonomously within the boundaries set by CLAUDE.md, project skills, and quality gates. No approval needed.
+
+**FINANCIAL (Founder approval always required):**
+
+- Any spend above established budget thresholds.
+- Trading capital allocation changes (TradeOS).
+- New subscription or service commitments.
+- Switching AI providers or plans.
+
+Process: No agent may commit financial resources without explicit founder approval. Budget monitoring is automated; spending decisions are human.
+
+### 2.3 — Bug Triage Protocol
+
+Bugs are prioritized by severity, with a bias toward fixing before building new features.
+
+**Philosophy:** Code in production should run with minimum bugs. Fixing bugs takes priority over new features in most cases. A clean, stable codebase compounds in value — technical debt compounds in cost.
+
+**Severity Classification:**
+
+- **Critical:** System is broken, data is at risk, trades are affected, users are blocked. Drop everything and fix immediately.
+- **High:** Feature is degraded but system functions. Fix before starting any new feature work.
+- **Medium:** Non-blocking issue, workaround exists. Schedule in the next build cycle.
+- **Low:** Cosmetic, minor UX, or edge case. Fix when convenient or batch with related work.
+
+**The Fix Protocol:**
+
+- Deep-dive to find the root cause — never patch symptoms.
+- Fix the root cause.
+- Run the full test suite after the fix.
+- Verify the fix does not introduce new bugs (no regression).
+- If the fix touches critical paths, add new test cases to prevent recurrence.
+- Batch related bug fixes into a single commit; separate architecturally distinct fixes into their own commits.
+
+### 2.4 — Financial Framework: AI Spend
+
+**Primary AI investment:** Anthropic Max Plan (~$200/month). This is the core engine for all ARUSHAI operations — web session brainstorming, Claude Code execution, and future multi-agent workloads. The goal is to maximize value extraction from this subscription before spending elsewhere.
+
+**Allocation priority for the Max Plan:**
+
+- Strategic brainstorming (web sessions like FORGE sessions) — highest value per token.
+- CC execution for product builds — direct output generation.
+- Future multi-agent operations — as Stage 3+ unfolds.
+
+**Secondary provider:** OpenRouter as a fallback for cases where the Anthropic subscription cannot be used. Budget kept minimal (~$30-40 credit reserve). This is Plan B, not a parallel system.
+
+**The Cost Principle:** Maximize the subscription already being paid for. Do not split spend across multiple providers unless there is a clear technical reason (model not available, specific capability needed). Every dollar spent on a secondary provider should have a justification for why the Max Plan could not handle it.
+
+**Future cost scaling:** As the company grows and multi-agent workloads increase, API costs will be evaluated quarterly. The approach is to tier costs — expensive models for planning and orchestration, cheaper models for execution — rather than using one model tier for everything.
+
+**TradeOS Trading Capital Risk Limits:** [TO BE DEFINED — trading drawdown limits, daily/monthly loss caps, and system pause triggers will be established as TradeOS strategies mature in live trading. Reference TradeOS_context.md for current slot-based position sizing parameters.]
+
+### 2.5 — The Escalation Protocol
+
+When should an AI agent (Stage 3+) stop and ask the founder?
+
+**Always escalate when:**
+
+- The task involves financial commitment or spend above threshold.
+- The action is irreversible (production deployment, trade execution, data deletion, user-facing communication).
+- The agent encounters ambiguous or conflicting requirements.
+- The agent's confidence in its approach is low.
+- An error occurs that the agent cannot self-resolve after one retry.
+- The task crosses product boundaries (requires coordination between multiple ARUSHAI products).
+- Security-sensitive operations (API key rotation, access changes, infrastructure changes).
+
+**Never escalate when:**
+
+- Routine code implementation within established patterns.
+- Test writing and running.
+- Git operations following branch discipline.
+- Documentation updates following templates.
+- Dependency updates that pass all tests.
 
 ---
 
