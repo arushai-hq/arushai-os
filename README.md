@@ -2,7 +2,7 @@
 
 Company-level operating protocols, decision frameworks, and knowledge base for ARUSHAI Systems Private Limited.
 
-This repo is the single source of truth for how ARUSHAI operates — from product development lifecycle to financial frameworks to AI agent governance.
+This is the sole company-level repository for ARUSHAI. It is the single source of truth for how ARUSHAI operates — from product development lifecycle to financial frameworks to AI agent governance. Legacy content from the former `arushai-hq/brain` repo has been archived under `docs/archive/brain-legacy/`.
 
 ## Overview
 
