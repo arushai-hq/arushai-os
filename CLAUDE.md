@@ -42,3 +42,10 @@ Custom skills are defined in `.claude/skills/`. Use these skills when their trig
 - **Use when:** Converting raw FORGE session output into a structured, referenceable summary.
 - **Triggers:** "summarize FORGE session", "create session summary", "archive session", "FORGE summary"
 - **Always use this skill when archiving FORGE session results.**
+
+### arushai-project-scaffold
+
+- **Location:** `.claude/skills/arushai-project-scaffold/SKILL.md`
+- **Use when:** Scaffolding a new ARUSHAI repository following the ASPS standard.
+- **Triggers:** "scaffold", "new project", "init project", "set up project structure"
+- **Always use this skill when initializing a new repo under arushai-hq/.**

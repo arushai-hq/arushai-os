@@ -1,0 +1,25 @@
+# CC personal overrides
+.claude/settings.local.json
+.claude/CLAUDE.md
+
+# Secrets
+config/secrets.yaml
+.env
+.env.*
+
+# Runtime
+logs/
+*.log
+__pycache__/
+node_modules/
+.venv/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
