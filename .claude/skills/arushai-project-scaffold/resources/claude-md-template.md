@@ -37,4 +37,4 @@
 - For project state and open tasks: `{PROJECT_NAME}_context.md`
 - For architecture patterns: `.claude/skills/{PROJECT_NAME}-architecture/`
 - For company-wide rules: `arushai-hq/arushai-os` → `docs/ARUSHAI_operating_system.md`
-- For project structure standard: `docs/standards/ASPS-v1.0.0.md`
+- For project structure standard: `arushai-hq/arushai-os/docs/standards/` (latest ASPS version)

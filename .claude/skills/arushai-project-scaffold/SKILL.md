@@ -5,9 +5,9 @@ description: Scaffolds a new ARUSHAI project following the ASPS (ARUSHAI Standar
 
 # ARUSHAI Project Scaffold Skill
 
-Scaffold a new ARUSHAI repository following ASPS v1.0.0.
+Scaffold a new ARUSHAI repository following the ARUSHAI Standard Project Structure (ASPS).
 
-Full specification: `docs/standards/ASPS-v1.0.0.md`. Load it for complete details on patterns, tiers, templates, and gitignore rules.
+Before scaffolding, read the latest ASPS specification. Look in `docs/standards/` for the highest versioned `ASPS-v*.md` file and follow its current structure for directory layout, CLAUDE.md templates, tier requirements, and agent architecture. If running outside the arushai-os repo, the ASPS spec lives at `arushai-hq/arushai-os/docs/standards/`.
 
 ## Step 1 — Gather Inputs
 
@@ -36,7 +36,7 @@ Default to MEDIUM for Pattern A/B/C/D application repos unless the user specifie
 
 ## Step 3 — Create Directory Structure
 
-Create the directory tree for the selected pattern and tier. Reference `docs/standards/ASPS-v1.0.0.md` Sections 5.1–5.4 for the exact structure per pattern.
+Create the directory tree for the selected pattern and tier. Reference the current ASPS spec Sections 5.1–5.4 for the exact structure per pattern.
 
 Always create:
 - `CLAUDE.md` (root)
@@ -97,7 +97,31 @@ Append-only. Resolved TODOs and older session log rows are moved here.
 Never edit existing entries.
 ```
 
-## Step 5 — Commit
+## Step 5 — Scaffold Agents (MEDIUM and HEAVY only)
+
+Per the ASPS Agent Architecture Standard, set up the agent layer.
+
+### For MEDIUM tier:
+
+1. Create `.claude/agents/` directory.
+2. Create `.claude/agents/code-reviewer.md` using template: `.claude/skills/arushai-project-scaffold/resources/code-reviewer-template.md`. This is mandatory for all MEDIUM and HEAVY projects.
+
+### For HEAVY tier:
+
+1. Everything from MEDIUM above.
+2. Ask the user which project-specific agent roles are needed. Present these options from ASPS Section 7.5:
+   - mobile-developer
+   - frontend-developer
+   - backend-developer
+   - api-architect
+   - ai-engineer
+   - qa-tester
+   - devops-engineer
+3. For each selected role, create `.claude/agents/{role}.md` using template: `.claude/skills/arushai-project-scaffold/resources/agent-template.md`. Replace all `{PLACEHOLDER}` variables with the role's appropriate values. Set tool permissions per ASPS Section 7.8.
+
+Maximum: 4-5 agents per project (including code-reviewer). If the user selects more, advise converting the excess to skills instead.
+
+## Step 6 — Commit
 
 ```
 chore: scaffold {project-name} — ASPS {pattern} / {tier}
