@@ -576,6 +576,10 @@ Structure:
 {What follows from this decision — positive and negative}
 ```
 
+### 9.4 Diagram-First Principle
+
+All significant documents must include Mermaid diagrams per the OSD Diagram-First Documentation principle (OSD Section 5.8). Workflows get flowcharts. Architectures get structural diagrams. Data flows get sequence diagrams. Diagrams go at the top of the relevant section, before the prose explanation.
+
 ---
 
 ## 10. .gitignore Standard

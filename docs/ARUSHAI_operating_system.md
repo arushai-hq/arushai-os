@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.4.0 |
+| Version | 1.5.0 |
 | Last Updated | 2026-03-15 |
 | Author | Irfan |
-| Status | v1.4.0 — ASPS updated to v1.1.0 (Agent Architecture Standard added). Living document — will be updated as the company evolves. |
+| Status | v1.5.0 — Product lifecycle formalized as 8-phase pipeline. Diagram-First Documentation principle added. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -218,69 +218,171 @@ When should an AI agent (Stage 3+) stop and ask the founder?
 
 ### 3.1 — Overview
 
-Every ARUSHAI product follows a five-phase lifecycle. No phase is skipped. Each phase has defined inputs, outputs, and quality gates before moving to the next.
-
-The phases: Research and Validation, Architecture and Planning, Build, Deploy and Validate, Operate and Iterate.
+Every ARUSHAI product follows an 8-phase pipeline from idea to operation. No phase is skipped. Each phase has defined inputs, outputs, and decision gates before progressing. Phases 1-3 are planning (Nemawashi) conducted in web sessions. Phases 4-8 are execution driven by CC prompts.
 
 This lifecycle applies to new products, major features, and significant architectural changes. Minor bug fixes and routine updates follow the Bug Triage Protocol (Section 2.3) instead.
 
-### 3.2 — Phase 1: Research and Validation
+```mermaid
+flowchart TD
+    P1[1. Ideation<br/>Web session — brainstorm]
+    G1{Worth building?}
+    P2[2. Research<br/>Web session — Nemawashi]
+    P3[3. PRD + Architecture<br/>Web session — planning]
+    G2{PRD + arch locked?}
+    HO[/"Web Session → CC Handoff"/]
+    P4[4. Repo Scaffold<br/>CC prompt #1]
+    P5[5. Skills + Agents Install<br/>CC prompt #2]
+    G3{Skills + agents ready?}
+    P6[6. Build<br/>CC prompts #3, #4, #5...]
+    P7[7. Deploy<br/>CC prompt]
+    P8[8. Operate<br/>CC + Web session ongoing]
 
-**Purpose:** Determine whether a problem is worth solving and whether ARUSHAI can solve it differently or better than what exists.
+    P1 --> G1
+    G1 -->|Yes| P2
+    G1 -->|No / Park| PARK[Parked Ideas]
+    P2 --> P3
+    P3 --> G2
+    G2 -->|Yes| HO
+    G2 -->|No| P3
+    HO --> P4
+    P4 --> P5
+    P5 --> G3
+    G3 -->|Yes| P6
+    G3 -->|No| P5
+    P6 --> P7
+    P7 --> P8
+
+    style P1 fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style P2 fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style P3 fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style P4 fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style P5 fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style P6 fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style P7 fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style P8 fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style G1 fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style G2 fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style G3 fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style HO fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style PARK fill:#F1EFE8,stroke:#5F5E5A,color:#444441
+```
+
+### 3.2 — Phase 1: Ideation (Web Session)
+
+**Purpose:** Determine whether a problem is worth solving and whether ARUSHAI can build something meaningfully different.
 
 **Activities:**
 
-- Identify a real human problem — not a technology looking for a problem.
-- Conduct a FORGE session (web session deep-dive) to research the domain, market, competitors, and technical feasibility.
-- Gather evidence: market size, existing solutions, gaps in current offerings, relevant technologies.
-- Every claim must be backed by evidence — web search results, published data, or verifiable sources. No assumptions presented as facts.
-- Apply the differentiation check: if ARUSHAI cannot offer something meaningfully different or better, do not build.
+- Problem definition and pain validation — identify a real human problem, not a technology looking for a problem.
+- Competitive landscape scan with evidence — web search results, published data, or verifiable sources. No assumptions presented as facts.
+- Dogfooding assessment — does ARUSHAI itself need this tool?
+- Name stress-test and lock — the product name is finalized before leaving this phase.
 
-**Outputs:**
+**Output:** Idea brief (parked in Product Registry or promoted to Research).
 
-- FORGE session summary stored in arushai-hq/arushai-os/docs/forge-sessions/.
-- GO / NO-GO decision documented with rationale.
+**Decision Gate:** "Is this worth building?" The founder must articulate in one sentence what problem this solves, for whom, and why ARUSHAI is the right one to solve it. If this sentence is unclear, the idea is parked.
 
-**Quality Gate:** The founder must be able to articulate in one sentence what problem this solves, for whom, and why ARUSHAI is the right one to solve it. If this sentence is unclear, the product stays in research.
+### 3.3 — Phase 2: Research (Web Session — Nemawashi)
 
-### 3.3 — Phase 2: Architecture and Planning
-
-**Purpose:** Design the solution completely before writing any code. This is the Nemawashi phase — the heaviest investment of thinking time.
+**Purpose:** Deep-dive into the problem space and validate the opportunity with evidence before committing to a solution.
 
 **Activities:**
 
-- Define the technology stack with rationale for each choice.
-- Design the data model, API structure, and system architecture.
-- Identify deployment strategy (VPS, Vercel, Docker, etc.).
-- Model costs: API costs, hosting costs, projected revenue if applicable.
-- Explore edge cases, failure modes, and security considerations.
+- Full competitive deep dive with evidence — every claim backed by verifiable sources.
+- Target user definition — who exactly is this for, and what is their current workflow?
+- Core user journey mapping — the critical path from first touch to value delivery.
+- Differentiation lock — if ARUSHAI cannot offer something meaningfully different or better, do not build.
+- Key mechanism deep dive — the core technical or product insight that makes the solution work.
+- Conduct a FORGE session (web session deep-dive) for foundational knowledge gathering if the domain is new.
+
+**Output:** Research complete. FORGE session summary stored in arushai-hq/arushai-os/docs/forge-sessions/ if applicable. Ready for PRD.
+
+### 3.4 — Phase 3: PRD + Architecture (Web Session)
+
+**Purpose:** Design the solution completely before writing any code. This is the heaviest investment of thinking time.
+
+**Activities:**
+
+- PRD creation: features, scope, MVP definition.
+- Architecture decisions: technology stack with rationale, data model, API structure, system architecture.
+- ADRs written for each major decision.
+- Deployment strategy identified (VPS, Vercel, Docker, etc.).
+- Cost modeling: API costs, hosting costs, projected revenue if applicable.
+- Edge cases, failure modes, and security considerations explored.
+- ASPS pattern selection (A/B/C/D) and tier assignment (LIGHT/MEDIUM/HEAVY).
+- Agent selection per ASPS Section 7 — which agents and skills the project needs.
 - Compare alternative approaches — never commit to the first idea without evaluating at least one alternative.
-- Create the product living document ([Product]_context.md) at the repo root as the single source of truth.
-- Set up the repo with appropriate skills installed at project level (per the Skill Installation Protocol defined in Section 4).
-- Write comprehensive CLAUDE.md defining CC's role, boundaries, and conventions for this project.
-- Generate CC prompts only after architecture decisions are locked.
 
-**Outputs:**
+**Output:** Locked PRD + architecture decisions + agent/skill plan.
 
-- Product living document created and populated with architecture decisions.
-- Repo initialized with CLAUDE.md, skills, README.md, and project structure.
-- First CC prompts ready for execution.
+**Decision Gate:** "PRD locked, architecture locked?" The founder can describe the full system — stack, data flow, deployment, and cost model — without hesitation. Any open questions have been resolved or explicitly deferred with rationale.
 
-**Quality Gate:** Architecture decisions are locked. The founder can describe the full system — stack, data flow, deployment, and cost model — without hesitation. Any open questions have been resolved or explicitly deferred with rationale.
+### 3.5 — The Web Session to CC Handoff
 
-### 3.4 — Phase 3: Build
+Phases 1-3 produce planning artifacts. Phase 4 begins execution. The handoff is the critical transition point.
+
+**What crosses the boundary:**
+
+- Locked PRD and architecture decisions (from the web session).
+- ASPS pattern and tier selection.
+- Agent and skill plan.
+- CC prompts generated in the web session — instruction-only, no code.
+
+**The rule:** The web session designs WHAT to build and WHAT skills/agents are needed. CC CREATES the repo, skills, agents, and code. The founder never writes code in the web session; CC never makes strategic decisions.
+
+| Phase | Driven By | Where | Output |
+|---|---|---|---|
+| 1-3 | Web Session (human + Claude brainstorm) | Claude Project chat | Idea brief → Research → Locked PRD |
+| 4-5 | CC (Claude Code in terminal) | Terminal in repo | ASPS-compliant repo with skills + agents |
+| 6-7 | CC (prompted by Web Session) | Terminal in repo | Working, deployed application |
+| 8 | Both | Both | Stable, evolving product |
+
+### 3.6 — Phase 4: Repo Scaffold (CC Prompt #1)
+
+**Purpose:** Create the project repository with full ASPS compliance before any application code is written.
+
+**Activities:**
+
+- Create GitHub repo with description.
+- Run the arushai-project-scaffold skill (or follow its steps manually).
+- Directory structure created per ASPS pattern and tier.
+- CLAUDE.md (<200 lines) + README.md + living document generated.
+- `.claude/agents/` and `.claude/skills/` directories created.
+- `docs/` structure created per tier requirements.
+- Product Registry updated in arushai-os.
+
+**Output:** Empty but fully ASPS-compliant repo. No application code yet — just structure, configuration, and documentation scaffolding.
+
+### 3.7 — Phase 5: Skills + Agents Install (CC Prompt #2)
+
+**Purpose:** Equip the repo with the knowledge (skills) and workers (agents) CC needs before writing application code.
+
+**Activities:**
+
+- Install global ARUSHAI skills (if applicable).
+- Create project-specific skills from PRD and architecture decisions.
+- Populate agent `.md` files with project-specific system prompts and tool permissions.
+- Agents reference the installed skills for domain knowledge.
+- code-reviewer agent is mandatory for MEDIUM and HEAVY tier projects.
+- CLAUDE.md updated with skill table and agent references.
+
+**Output:** Fully equipped repo — agents know their jobs, skills provide the knowledge.
+
+**Decision Gate:** "Skills installed, agents configured, CLAUDE.md updated?" CC must be able to start a session in this repo and be fully oriented within 30 seconds of reading CLAUDE.md.
+
+### 3.8 — Phase 6: Build (CC Prompts #3+)
 
 **Purpose:** Execute the plan through CC. The founder generates instruction-only prompts; CC writes the code.
 
 **Activities:**
 
-- CC executes prompts following the CC Interaction Protocol (Section 4).
+- CC reads CLAUDE.md and is fully oriented within 30 seconds.
+- Agents handle specialized work, each referencing relevant skills.
+- code-reviewer agent reviews every change before commit.
 - Every CC prompt specifies: git branch, skills to activate, context reference, what to build, acceptance criteria, do-not list, and when-done actions.
 - CC prompts never contain actual code — only intent, requirements, and constraints. CC has its own skills and project context to determine implementation.
-- Test suite grows with every feature. The benchmark is TradeOS: 340+ tests, zero failures.
-- README.md updated with every feature addition.
-- Living document updated after every concluded discussion or build cycle.
-- Batch related changes into single commits. Separate architecturally distinct changes into their own commits.
+- Test suite grows with every feature. The benchmark is TradeOS: 499+ tests, zero failures.
+- Living document updated after every significant milestone.
 
 **The Build Rhythm:**
 
@@ -292,16 +394,11 @@ This lifecycle applies to new products, major features, and significant architec
 - If not met: identify gaps, generate follow-up CC prompt, iterate.
 - After each build cycle: run full test suite, verify zero failures.
 
-**Outputs:**
+**Output:** Working code committed, tests passing, README.md and living document current.
 
-- Working code committed to feature branch.
-- Tests passing with zero failures.
-- README.md and living document current.
-- Feature branch ready for merge to main.
+**Quality Gate:** All acceptance criteria met. Full test suite passes with zero failures. No known regressions.
 
-**Quality Gate:** All acceptance criteria from the CC prompt are met. Full test suite passes with zero failures. README.md and living document are updated. No known regressions.
-
-### 3.5 — Phase 4: Deploy and Validate
+### 3.9 — Phase 7: Deploy (CC Prompt)
 
 **Purpose:** Put the product into production and verify it behaves correctly in the real environment.
 
@@ -314,18 +411,11 @@ This lifecycle applies to new products, major features, and significant architec
 - Establish a notification cadence: regular health check signals (e.g., TradeOS sends Telegram notifications every 30 minutes during market hours). If a scheduled notification is missed, immediately check server logs.
 - Document any production-specific configuration or environment differences.
 
-**The Monitoring Philosophy:** Production is not "set and forget." Every deployed product is actively monitored. Missed notifications or unexpected silence from monitoring triggers immediate investigation. The founder checks monitoring regularly and treats monitoring gaps as potential incidents.
+**The Monitoring Philosophy:** Production is not "set and forget." Every deployed product is actively monitored. Missed notifications or unexpected silence from monitoring triggers immediate investigation.
 
-**Outputs:**
+**Output:** Product live in production with active monitoring. No critical bugs in the first 24-48 hours. Monitoring notifications arriving on schedule.
 
-- Product live in production.
-- Monitoring configured and verified.
-- First 24-48 hours monitored without critical issues.
-- Any production issues documented and fed back into the Build phase.
-
-**Quality Gate:** Product is running in production with active monitoring. No critical bugs in the first 24-48 hours. Monitoring notifications are arriving on schedule.
-
-### 3.6 — Phase 5: Operate and Iterate
+### 3.10 — Phase 8: Operate (CC + Web Session)
 
 **Purpose:** Continuously run, monitor, improve, and decide the product's future.
 
@@ -334,9 +424,9 @@ This lifecycle applies to new products, major features, and significant architec
 - Ongoing monitoring per the established cadence.
 - Bug triage following Section 2.3 protocol.
 - Session debriefs after significant operating periods (see the Session Debrief Protocol below).
-- Feature iteration: new ideas and improvements enter through the Nemawashi process (Phase 1-2 lite for features within an existing product).
+- Feature iteration: new ideas and improvements enter through the Nemawashi process (Phases 1-3 lite for features within an existing product).
 - Performance tracking: is the product delivering on its intended purpose?
-- Products deployed as persistent services should provide CLI tooling for all routine operations (start, stop, status, health check, reports). CLI output must use color-coded terminal text (ANSI colors) — green for success and running states, red for errors and stopped states, yellow for warnings. This ensures operational commands are eye-catching and scannable. TradeOS is the reference example with its tradeos CLI.
+- Products deployed as persistent services should provide CLI tooling for all routine operations (start, stop, status, health check, reports). CLI output must use color-coded terminal text (ANSI colors) — green for success and running states, red for errors and stopped states, yellow for warnings. TradeOS is the reference example with its tradeos CLI.
 
 **The Session Debrief Protocol:** After each significant operating period, conduct a structured debrief. The debrief follows this pattern: run the system through a representative period, catalogue all issues with unique IDs (e.g., B1, B2, B3), fix each issue systematically starting with the most critical, grow the test suite with new cases for every fix to prevent recurrence, document all findings in the living document, and archive resolved items to the context archive. TradeOS Sessions 01-04 are the reference implementation of this pattern, where this protocol grew the test suite from initial coverage to 499+ tests with zero failures.
 
@@ -349,24 +439,28 @@ This lifecycle applies to new products, major features, and significant architec
 - Is the market wrong? (Pivot or expand audience.)
 - Is it time to sunset? (Remove from production, reduce costs, reallocate effort.)
 
-The default is to iterate (Deploy, Validate, Operate, Iterate), not to kill. Products are given multiple iteration cycles before a sunset decision. But cost-awareness is maintained — a product running at a loss with no improvement trajectory is paused, not left running indefinitely.
+The default is to iterate, not to kill. Products are given multiple iteration cycles before a sunset decision. But cost-awareness is maintained — a product running at a loss with no improvement trajectory is paused, not left running indefinitely.
 
-**Outputs:**
+**Output:** Ongoing stable operation with monitoring. Bugs fixed, features added through the standard lifecycle. Periodic session debriefs documented. Clear-eyed evaluation of product viability at regular intervals.
 
-- Ongoing stable operation with monitoring.
-- Bugs fixed, features added through the standard lifecycle.
-- Periodic session debriefs documented in living document.
-- Clear-eyed evaluation of product viability at regular intervals.
+### 3.11 — Key Rules
 
-### 3.7 — The Lifecycle Applied to ARUSHAI Products
+- No phase can be skipped. Every product follows this sequence.
+- Phases 1-3 are planning (Nemawashi). Phases 4-8 are execution.
+- The Web Session designs WHAT skills and agents are needed. CC CREATES them.
+- Skills must be installed before the first line of application code is written.
+- The Product Registry (`docs/product-registry.md`) is updated when a product changes phase.
+
+### 3.12 — The Lifecycle Applied to ARUSHAI Products
 
 Current product status mapped to lifecycle phases:
 
-- **TradeOS:** Phase 5 (Operate and Iterate) — S1 strategy in production on main branch, HAWK AI engine in active development on feature/hawk branch.
-- **Flint:** Phase 3-4 (Build transitioning to Deploy) — Multi-provider AI abstraction layer built, local testing and Vercel deployment pending.
-- **VIZBOARD:** Phase 3 (Build) — Product definition locked, CC prompts generated, build execution in progress.
+- **TradeOS:** Phase 8 (Operate) — S1 strategy in production, HAWK AI engine in active development.
+- **Flint:** Phase 6 (Build) — Core UI + AI engine built, pre-deployment.
+- **VIZBOARD:** Phase 6 (Build) — v0.1 build prompt generated, execution pending.
+- **HULMI:** Phase 2 (Research) — Nemawashi in progress, competitive analysis underway.
 
-### 3.8 — Project Structure Standard (ASPS)
+### 3.13 — Project Structure Standard (ASPS)
 
 All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.1.0.md`.
 
@@ -407,7 +501,7 @@ Start with the simplest pattern that fits. Upgrade when complexity demands it.
 
 Full specification: `docs/standards/ASPS-v1.1.0.md`.
 
-### 3.9 — Product Registry
+### 3.14 — Product Registry
 
 The current portfolio of ARUSHAI products and their lifecycle phases is tracked in `docs/product-registry.md`. The registry is a living document updated whenever a product changes phase, a new product enters Research, or a product is archived.
 
@@ -637,6 +731,30 @@ Context loss between sessions is the single biggest productivity killer in the A
 - Never let session context remain only in chat history. If it matters, it belongs in a document.
 - Archive aggressively. A living document cluttered with resolved items is harder to use than one that is lean and current.
 - Treat context like code: it has a lifecycle (create, use, update, archive), it needs maintenance, and it degrades if neglected.
+
+### 5.8 — Diagram-First Documentation
+
+Every significant document in the ARUSHAI ecosystem must include at least one diagram or visual flow for human comprehension. Markdown is optimized for AI agents; diagrams are optimized for humans. Both audiences must be served.
+
+**Rules:**
+
+- Use Mermaid syntax for diagrams in markdown files (GitHub renders Mermaid natively).
+- Every workflow, pipeline, or multi-step process must have a flowchart diagram.
+- Every architecture decision must have a structural diagram showing components.
+- Every data flow must have a sequence or flow diagram.
+- Diagrams go at the TOP of the relevant section, before the prose explanation.
+- Prose explains the details; the diagram provides the overview.
+
+**Supported diagram types (via Mermaid):**
+
+- `flowchart` (TD or LR) — for workflows, pipelines, decision trees.
+- `sequenceDiagram` — for API flows, request/response, handshakes.
+- `erDiagram` — for database schemas.
+- `classDiagram` — for module relationships.
+- `stateDiagram-v2` — for state machines.
+- `graph` — for dependency graphs.
+
+**Scope:** This principle applies to OSD, ASPS, ADRs, runbooks, PRDs, and any document in `docs/`.
 
 ---
 
@@ -1071,3 +1189,6 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.0.0 | 2026-03-15 | Initial release. 8 sections, 58 subsections. |
 | 1.1.0 | 2026-03-15 | Patterns from TradeOS audit integrated (Sections 3.5, 3.6, 4.5, 5.3, 7.3). |
 | 1.2.0 | 2026-03-15 | Added Section 3.8: Project Structure Standard (ASPS) v1.0.0. |
+| 1.3.0 | 2026-03-15 | Added Section 3.9: Product Registry. |
+| 1.4.0 | 2026-03-15 | ASPS updated to v1.1.0 (Agent Architecture Standard added). |
+| 1.5.0 | 2026-03-15 | Formalized 8-phase product lifecycle pipeline with decision gates. Added Diagram-First Documentation principle (Section 5.8). Section 3 rewritten with Mermaid flowchart. |
