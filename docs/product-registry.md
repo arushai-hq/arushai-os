@@ -9,7 +9,7 @@ Living document tracking all ARUSHAI Systems products. Updated when products cha
 | TradeOS | arushai-hq/tradeOS | B (Engine+Tools) | HEAVY | Operate | Active paper trading, S1 strategy, 499 tests | AI-powered algorithmic trading system for NSE intraday equities |
 | Flint | arushai-hq/flint-app | A (Single-Stack) | MEDIUM | Build | Core UI + AI engine built, pre-deployment | AI-powered message polishing for professionals |
 | VIZBOARD | arushai-hq/VizBoard | C (Frontend+Backend) | MEDIUM | Build | v0.1 build prompt generated, execution pending | Internal visual strategy board tool for client meetings |
-| HULMI | arushai-hq/hulmi (to be created) | TBD | TBD | Research | Nemawashi in progress — name locked, competitive analysis underway | Zero-friction thought capture via messaging apps + AI-powered contextual resurfacing |
+| HULMI | arushai-hq/hulmi | C (Frontend+Backend) | MEDIUM | Skills + Agents Install | Phase 5/8. Repo scaffolded. Stack: React Native (Expo) + Next.js 14 + Supabase + pgvector. PRD v1.2 locked. Agents: mobile-developer, api-architect, ai-engineer, code-reviewer. Skills: supabase-patterns, whatsapp-cloud-api, telegram-bot-api, ai-pipeline, resurfacing-engine, expo-mobile, nextjs-dashboard | Zero-friction thought capture via messaging apps + AI-powered contextual resurfacing |
 
 ## Archived / Deprecated
 
@@ -19,7 +19,7 @@ Living document tracking all ARUSHAI Systems products. Updated when products cha
 
 ## Product Phases
 
-Per OSD Section 3, every product follows: Research → Architecture → Build → Deploy → Operate
+Per OSD Section 3, every product follows the 8-phase pipeline: Ideation → Research → PRD + Architecture → Repo Scaffold → Skills + Agents Install → Build → Deploy → Operate
 
 ## Parked Ideas
 
@@ -30,4 +30,4 @@ Ideas identified but not yet in Research phase:
 ---
 
 Last Updated: 2026-03-15
-Updated By: FORGE-002 session
+Updated By: HULMI Phase 5 transition
