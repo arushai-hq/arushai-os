@@ -1,0 +1,15 @@
+# {PROJECT_NAME} — Default Configuration
+# Application defaults. Safe to commit. Override with environment variables or config/secrets.yaml.
+# See config/README.md for documentation of every value.
+
+app:
+  name: "{PROJECT_NAME}"
+  version: "0.1.0"
+  environment: "development"  # development | staging | production
+
+logging:
+  level: "info"  # debug | info | warn | error
+  format: "json"  # json | text (text for local development only)
+
+# Add domain-specific defaults below.
+# For complex projects, split into separate files (e.g., ai.yaml, database.yaml).

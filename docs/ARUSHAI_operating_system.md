@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.5.0 |
+| Version | 1.6.0 |
 | Last Updated | 2026-03-15 |
 | Author | Irfan |
-| Status | v1.5.0 — Product lifecycle formalized as 8-phase pipeline. Diagram-First Documentation principle added. Living document — will be updated as the company evolves. |
+| Status | v1.6.0 — Code Standards (Externalized Configuration, Structured Logging, Config Directory) formalized. ASPS updated to v1.2.0. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -462,7 +462,7 @@ Current product status mapped to lifecycle phases:
 
 ### 3.13 — Project Structure Standard (ASPS)
 
-All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.1.0.md`.
+All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.2.0.md`.
 
 **Key requirements:**
 
@@ -499,7 +499,7 @@ Start with the simplest pattern that fits. Upgrade when complexity demands it.
 | arushai-hq/VizBoard | C (Frontend + Backend) | MEDIUM | ~30% aligned, needs restructure + living doc |
 | arushai-hq/arushai-os | Documentation | LIGHT | ~60% aligned, verify CLAUDE.md |
 
-Full specification: `docs/standards/ASPS-v1.1.0.md`.
+Full specification: `docs/standards/ASPS-v1.2.0.md`.
 
 ### 3.14 — Product Registry
 
@@ -612,6 +612,74 @@ Long CC sessions risk context window exhaustion. The protocol for managing this:
 - For session recovery: recent_chats with higher n value is more reliable than conversation_search for retrieving session-level context by title.
 - When context-mode is installed on a project: use the --continue flag when resuming multi-session builds to carry forward indexed context. Without --continue, previous session data is deleted.
 - The living document is the ultimate fallback for session continuity. If all else fails, the living document has the current state.
+
+### 4.9 — Code Standards
+
+Non-negotiable engineering standards for every ARUSHAI codebase. These were formalized after discovering hardcoded values and zero observability during the HULMI build — the same gaps exist in most early-stage projects. Enforcing these from day one prevents expensive retrofits later.
+
+```mermaid
+flowchart LR
+    subgraph Sources
+        A["config/\nApp defaults\n(committed)"]
+        B[".env\nSecrets\n(gitignored)"]
+    end
+
+    subgraph Runtime
+        C["Application"]
+        D["Structured Logger\nJSON · levels · correlation IDs"]
+    end
+
+    A --> C
+    B --> C
+    C --> D
+    D --> E["logs/\n(gitignored)"]
+
+    style A fill:#d4edda,stroke:#28a745
+    style B fill:#f8d7da,stroke:#dc3545
+    style D fill:#cce5ff,stroke:#007bff
+    style E fill:#e2e3e5,stroke:#6c757d
+```
+
+#### 4.9.1 — Externalized Configuration
+
+Every configurable value — API keys, model names, token limits, thresholds, URLs, feature flags — lives in a configuration source, never inline in application code. The rule is simple: if a value might change between environments, stages, or over the product lifetime, it belongs in config.
+
+- **Application defaults** go in `config/` files (committed to repo). These are safe, non-secret values with sensible defaults.
+- **Secrets and environment-specific values** go in `.env` (gitignored). Never committed. An `.env.example` file documents required variables.
+- **Runtime overrides** via environment variables take precedence over config file defaults.
+
+The test: can you change any operational parameter without editing application code? If not, the code violates this standard.
+
+#### 4.9.2 — Structured Logging from Day One
+
+Every project starts with a logging framework in the first build prompt. `console.log` and `print()` are banned in production code. Logs must be:
+
+- **Structured:** JSON format so they can be parsed, searched, and aggregated.
+- **Leveled:** DEBUG, INFO, WARN, ERROR — with log level configurable via environment variable.
+- **Contextual:** Every log entry includes a correlation ID for request tracing and relevant context (function name, user ID where applicable, operation type).
+- **Timed:** Every external API call and database query is timed and logged at INFO level.
+
+The test: can you trace a single user request from entry to exit using only the logs? If not, the logging is insufficient.
+
+#### 4.9.3 — Config Directory Standard
+
+Every ARUSHAI project (MEDIUM and HEAVY tier) includes a `config/` directory at the project root:
+
+```
+config/
+├── default.yaml        # Application defaults (committed)
+├── secrets.yaml        # Local secrets (gitignored)
+├── README.md           # Documents every config value, its type, default, and purpose
+└── {domain}.yaml       # Domain-specific configs as needed (e.g., ai.yaml, database.yaml)
+```
+
+Rules:
+- `config/secrets.yaml` is always gitignored. The `.gitignore` standard enforces this.
+- `config/default.yaml` contains all non-secret defaults and is committed. A new developer can clone and run with only the defaults file.
+- `config/README.md` documents every config key, its type, default value, and purpose.
+- Project-specific domain configs (e.g., `ai.yaml`, `capture.yaml`) are encouraged for complex projects — they keep individual files focused and readable.
+
+Cross-reference: ASPS Section 10 (.gitignore Standard) enforces `config/secrets.yaml` exclusion. ASPS Sections 5.1–5.4 include `config/` in all composition patterns.
 
 ---
 
@@ -1192,3 +1260,4 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.3.0 | 2026-03-15 | Added Section 3.9: Product Registry. |
 | 1.4.0 | 2026-03-15 | ASPS updated to v1.1.0 (Agent Architecture Standard added). |
 | 1.5.0 | 2026-03-15 | Formalized 8-phase product lifecycle pipeline with decision gates. Added Diagram-First Documentation principle (Section 5.8). Section 3 rewritten with Mermaid flowchart. |
+| 1.6.0 | 2026-03-15 | Added Section 4.9: Code Standards (Externalized Configuration, Structured Logging from Day One, Config Directory). ASPS updated to v1.2.0. Scaffold skill updated with config templates. |

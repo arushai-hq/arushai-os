@@ -49,6 +49,10 @@ Always create:
 Add for MEDIUM and HEAVY:
 - `{project}_context.md`
 - `docs/context_archive.md`
+- `config/` directory with initial files:
+  - `config/default.yaml` — Use template: `.claude/skills/arushai-project-scaffold/resources/config-default-template.yaml`
+  - `config/secrets.yaml` — Use template: `.claude/skills/arushai-project-scaffold/resources/secrets-example-template.yaml` (this file is gitignored)
+  - `config/README.md` — Documenting every config key, type, default, and purpose
 
 Add for HEAVY:
 - `docs/decisions/`
