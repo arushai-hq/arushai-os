@@ -14,6 +14,7 @@ Every ARUSHAI product repo and every future AI agent references this document as
 
 - [ARUSHAI Operating System Document](docs/ARUSHAI_operating_system.md) — the core operating system document
 - [Forge Sessions](docs/forge-sessions/) — research and discovery session summaries
+  - [FORGE-001](docs/forge-sessions/FORGE-001-summary.md) — Foundations of Reasoning, Grounding & Engineering
 - [Templates](docs/templates/) — standard templates used across ARUSHAI projects
   - [CC Prompt Template](docs/templates/cc-prompt-template.md) — the mandatory prompt format for all CC interactions
 
