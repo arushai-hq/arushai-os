@@ -13,6 +13,7 @@ Every ARUSHAI product repo and every future AI agent references this document as
 ## Document Index
 
 - [ARUSHAI Operating System Document](docs/ARUSHAI_operating_system.md) — the core operating system document
+- [Product Registry](docs/product-registry.md) — living tracker of all ARUSHAI products, phases, and portfolio status
 - [Standards](docs/standards/) — locked ARUSHAI standards documents
   - [ASPS v1.0.0](docs/standards/ASPS-v1.0.0.md) — ARUSHAI Standard Project Structure: folder structure, CC configuration, CLAUDE.md templates, tier system, and composition patterns for all repos
 - [Forge Sessions](docs/forge-sessions/) — research and discovery session summaries

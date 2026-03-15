@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.2.0 |
+| Version | 1.3.0 |
 | Last Updated | 2026-03-15 |
 | Author | Irfan |
-| Status | v1.2.0 — ASPS v1.0.0 standard added (Section 3.8). Living document — will be updated as the company evolves. |
+| Status | v1.3.0 — Added Product Registry (docs/product-registry.md). Registered HULMI as new product in Research phase. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -406,6 +406,12 @@ Start with the simplest pattern that fits. Upgrade when complexity demands it.
 | arushai-hq/arushai-os | Documentation | LIGHT | ~60% aligned, verify CLAUDE.md |
 
 Full specification: `docs/standards/ASPS-v1.0.0.md`.
+
+### 3.9 — Product Registry
+
+The current portfolio of ARUSHAI products and their lifecycle phases is tracked in `docs/product-registry.md`. The registry is a living document updated whenever a product changes phase, a new product enters Research, or a product is archived.
+
+The registry captures: product name, repo, ASPS pattern, tier, current phase, status summary, and one-line description. It also tracks archived/deprecated products and parked ideas that have not yet entered the Research phase.
 
 ---
 
