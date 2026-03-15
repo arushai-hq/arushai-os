@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.3.0 |
+| Version | 1.4.0 |
 | Last Updated | 2026-03-15 |
 | Author | Irfan |
-| Status | v1.3.0 — Added Product Registry (docs/product-registry.md). Registered HULMI as new product in Research phase. Living document — will be updated as the company evolves. |
+| Status | v1.4.0 — ASPS updated to v1.1.0 (Agent Architecture Standard added). Living document — will be updated as the company evolves. |
 
 ---
 
@@ -368,7 +368,7 @@ Current product status mapped to lifecycle phases:
 
 ### 3.8 — Project Structure Standard (ASPS)
 
-All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.0.0.md`.
+All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.1.0.md`.
 
 **Key requirements:**
 
@@ -405,7 +405,7 @@ Start with the simplest pattern that fits. Upgrade when complexity demands it.
 | arushai-hq/VizBoard | C (Frontend + Backend) | MEDIUM | ~30% aligned, needs restructure + living doc |
 | arushai-hq/arushai-os | Documentation | LIGHT | ~60% aligned, verify CLAUDE.md |
 
-Full specification: `docs/standards/ASPS-v1.0.0.md`.
+Full specification: `docs/standards/ASPS-v1.1.0.md`.
 
 ### 3.9 — Product Registry
 
