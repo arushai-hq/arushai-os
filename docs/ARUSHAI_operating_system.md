@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.1.0 |
+| Version | 1.2.0 |
 | Last Updated | 2026-03-15 |
 | Author | Irfan |
-| Status | v1.1.0 — patterns from TradeOS audit integrated. Living document — will be updated as the company evolves. |
+| Status | v1.2.0 — ASPS v1.0.0 standard added (Section 3.8). Living document — will be updated as the company evolves. |
 
 ---
 
@@ -365,6 +365,47 @@ Current product status mapped to lifecycle phases:
 - **TradeOS:** Phase 5 (Operate and Iterate) — S1 strategy in production on main branch, HAWK AI engine in active development on feature/hawk branch.
 - **Flint:** Phase 3-4 (Build transitioning to Deploy) — Multi-provider AI abstraction layer built, local testing and Vercel deployment pending.
 - **VIZBOARD:** Phase 3 (Build) — Product definition locked, CC prompts generated, build execution in progress.
+
+### 3.8 — Project Structure Standard (ASPS)
+
+All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.0.0.md`.
+
+**Key requirements:**
+
+- Every repo has a CLAUDE.md (<200 lines), README.md, and `.claude/` directory.
+- Projects are tiered: LIGHT (documentation repos, simple tools), MEDIUM (active products with regular CC sessions), HEAVY (production systems with daily operations and complex CC workflows).
+- Application code follows one of four composition patterns:
+  - **Pattern A — Single-Stack:** Single framework handles both frontend and backend (e.g., Next.js). Example: Flint.
+  - **Pattern B — Engine + Tools:** Core engine plus supporting tools and CLI, same language. Example: TradeOS.
+  - **Pattern C — Frontend + Backend:** Separate frontend and backend technology stacks communicating over an API. Example: VIZBOARD.
+  - **Pattern D — Full Platform:** Three or more distinct components (frontend, backend, CLI, workers). Example: future complex products.
+- Each component directory (`frontend/`, `backend/`, `core/`, `cli/`) gets its own CLAUDE.md that acts as a skill router — instructing CC which skills to load when working in that directory. These are lazy-loaded, meaning CC only reads them when touching files in that directory.
+- Skills use progressive disclosure: `SKILL.md` body under 500 lines, overflow content in `resources/` subdirectory, deterministic operations in `scripts/`.
+- Living documents (`{project}_context.md`) are required for MEDIUM and HEAVY tiers.
+- Context archive (`docs/context_archive.md`) is required for MEDIUM and HEAVY tiers.
+- Architecture Decision Records in `docs/decisions/` are required for HEAVY tier.
+
+**Pattern selection guide:**
+
+| Question | If Yes → Pattern |
+|---|---|
+| Single framework handles both FE and BE? | A |
+| Core engine + supporting tools, same language? | B |
+| Separate FE and BE stacks? | C |
+| 3+ distinct components (FE + BE + CLI + workers)? | D |
+
+Start with the simplest pattern that fits. Upgrade when complexity demands it.
+
+**Current repo mapping:**
+
+| Repo | Pattern | Tier | Status |
+|---|---|---|---|
+| arushai-hq/tradeOS | B (Engine + Tools) | HEAVY | ~80% aligned, needs `core/` restructure |
+| arushai-hq/flint-app | A (Single-Stack) | MEDIUM | ~30% aligned, needs living doc + skills |
+| arushai-hq/VizBoard | C (Frontend + Backend) | MEDIUM | ~30% aligned, needs restructure + living doc |
+| arushai-hq/arushai-os | Documentation | LIGHT | ~60% aligned, verify CLAUDE.md |
+
+Full specification: `docs/standards/ASPS-v1.0.0.md`.
 
 ---
 
@@ -1014,3 +1055,13 @@ These metrics are not yet formally tracked. Establishing measurement is part of 
 Each stage must be solid before the next begins. A poorly documented operating system (Stage 1) means agents in Stage 3 will make wrong decisions because they are following incomplete rules. A weak CC configuration (Stage 2) means the founder wastes time re-explaining context that skills should have handled. A rushed orchestration layer (Stage 4) means agents coordinate poorly and create more problems than they solve.
 
 The Nemawashi principle applies to the company evolution itself: plan each stage thoroughly, validate it works, then move to the next. Speed comes from doing each stage right the first time, not from skipping stages.
+
+---
+
+## Version History
+
+| Version | Date | Changes |
+|---|---|---|
+| 1.0.0 | 2026-03-15 | Initial release. 8 sections, 58 subsections. |
+| 1.1.0 | 2026-03-15 | Patterns from TradeOS audit integrated (Sections 3.5, 3.6, 4.5, 5.3, 7.3). |
+| 1.2.0 | 2026-03-15 | Added Section 3.8: Project Structure Standard (ASPS) v1.0.0. |

@@ -13,6 +13,8 @@ Every ARUSHAI product repo and every future AI agent references this document as
 ## Document Index
 
 - [ARUSHAI Operating System Document](docs/ARUSHAI_operating_system.md) — the core operating system document
+- [Standards](docs/standards/) — locked ARUSHAI standards documents
+  - [ASPS v1.0.0](docs/standards/ASPS-v1.0.0.md) — ARUSHAI Standard Project Structure: folder structure, CC configuration, CLAUDE.md templates, tier system, and composition patterns for all repos
 - [Forge Sessions](docs/forge-sessions/) — research and discovery session summaries
   - [FORGE-001](docs/forge-sessions/FORGE-001-summary.md) — Foundations of Reasoning, Grounding & Engineering
 - [Templates](docs/templates/) — standard templates used across ARUSHAI projects
