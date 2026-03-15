@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.0.0 |
-| Last Updated | 2026-03-14 |
+| Version | 1.1.0 |
+| Last Updated | 2026-03-15 |
 | Author | Irfan |
-| Status | Complete — all 8 sections written. Living document — will be updated as the company evolves. |
+| Status | v1.1.0 — patterns from TradeOS audit integrated. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -333,9 +333,12 @@ This lifecycle applies to new products, major features, and significant architec
 
 - Ongoing monitoring per the established cadence.
 - Bug triage following Section 2.3 protocol.
-- Session debriefs after significant operating periods (TradeOS pattern: run the system, identify issues, fix them, document findings, as done in Sessions 01-04).
+- Session debriefs after significant operating periods (see the Session Debrief Protocol below).
 - Feature iteration: new ideas and improvements enter through the Nemawashi process (Phase 1-2 lite for features within an existing product).
 - Performance tracking: is the product delivering on its intended purpose?
+- Products deployed as persistent services should provide CLI tooling for all routine operations (start, stop, status, health check, reports). CLI output must use color-coded terminal text (ANSI colors) — green for success and running states, red for errors and stopped states, yellow for warnings. This ensures operational commands are eye-catching and scannable. TradeOS is the reference example with its tradeos CLI.
+
+**The Session Debrief Protocol:** After each significant operating period, conduct a structured debrief. The debrief follows this pattern: run the system through a representative period, catalogue all issues with unique IDs (e.g., B1, B2, B3), fix each issue systematically starting with the most critical, grow the test suite with new cases for every fix to prevent recurrence, document all findings in the living document, and archive resolved items to the context archive. TradeOS Sessions 01-04 are the reference implementation of this pattern, where this protocol grew the test suite from initial coverage to 499+ tests with zero failures.
 
 **Idea Capture:** Currently, new ideas and feature requests live in the founder's mind until a web session begins. This is a known gap. A structured capture system (voice notes, quick-entry tool, or simple backlog file per product) is on the roadmap to ensure ideas are not lost between sessions. Until that system exists, the living document serves as the capture point during active sessions.
 
@@ -432,6 +435,8 @@ Documentation is not optional. It is part of every CC prompt's "When done" secti
 
 **CLAUDE.md:** Defines CC's role, boundaries, coding conventions, and project-specific rules for each repo. Must be kept current as the project evolves. CC updates CLAUDE.md as part of prompts that change project conventions or add new tools.
 
+**Operations Guide (START.md or OPERATIONS.md):** Products with daily operational workflows (services, trading systems, always-on applications) should maintain a quick-start operations guide alongside README.md. The README covers setup, architecture, and full reference. The operations guide covers the daily commands: how to start, stop, check status, run reports. This reduces the cognitive load of finding routine operational commands in a long README. TradeOS is the reference example of this pattern.
+
 ### 4.6 — The Skill Installation Protocol
 
 Every new ARUSHAI repo must have appropriate skills installed at project level before any build work begins.
@@ -511,6 +516,10 @@ Every ARUSHAI product has a living document at its repo root: [Product]_context.
 - Every concluded discussion in a web session triggers a CC prompt to apply a delta update to the living document before moving on.
 - Updates are additive — add what is new, modify what has changed, do not rewrite the entire document.
 - The living document reflects reality, not aspiration. If something is not built yet, it belongs in "On the horizon," not "Current state."
+
+**The Roadmap Companion Pattern:**
+
+For products with complex multi-phase roadmaps, a separate ROADMAP.md file may be maintained alongside the living document. The living document handles current state and immediate next steps. The roadmap handles long-term planning over months and quarters — future strategies, deferred features, and phased rollout plans. Not every product needs a roadmap file — only those with enough forward-looking complexity that it would clutter the living document. TradeOS is the reference example of this pattern.
 
 ### 5.4 — The Context Archive
 
@@ -733,6 +742,8 @@ API keys, tokens, passwords, and credentials are the most sensitive assets in th
 - No secrets in logs, error messages, or monitoring output. If a log line could contain a secret, it must be redacted before writing.
 
 **Current implementation:** Environment variables on VPS (TradeOS), .env files locally (gitignored). As the company grows, a dedicated secret management solution (e.g., HashiCorp Vault, cloud provider secret managers) will be evaluated.
+
+**Alternative patterns:** Not every project uses .env files for secret management. Some projects use templated configuration files (e.g., secrets.yaml.template) where the template is committed to the repo and the actual secrets file is gitignored. The principle is the same: templates and examples are committed, actual secrets never are. The OSD does not mandate a specific format — it mandates the principle.
 
 ### 7.4 — Access Control
 
