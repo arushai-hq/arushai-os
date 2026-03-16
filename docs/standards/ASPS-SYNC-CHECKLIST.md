@@ -14,7 +14,7 @@ Use this checklist when a new ASPS version is released. Ensures all dependent ar
   - [ ] `resources/context-md-template.md` — matches ASPS Living Document Structure
   - [ ] `resources/gitignore-template` — matches ASPS .gitignore Standard
   - [ ] `resources/agent-template.md` — matches ASPS Agent File Format (Section 7.6)
-  - [ ] `resources/code-reviewer-template.md` — matches ASPS Mandatory Agent spec (Section 7.4)
+  - [ ] `resources/code-reviewer-template.md` — matches ASPS Mandatory Agent spec (Section 7.4) and covers all 15 Engineering Standards (OSD Section 4.9)
   - [ ] `resources/config-default-template.yaml` — matches ASPS Config Directory standard (Section 9.4)
   - [ ] `resources/secrets-example-template.yaml` — matches ASPS Config Directory standard (Section 9.4)
 - [ ] Verify tier requirements in SKILL.md match ASPS tier system (what is required at LIGHT/MEDIUM/HEAVY)

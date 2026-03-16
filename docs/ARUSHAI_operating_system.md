@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.6.0 |
-| Last Updated | 2026-03-15 |
+| Version | 1.7.0 |
+| Last Updated | 2026-03-16 |
 | Author | Irfan |
-| Status | v1.6.0 — Code Standards (Externalized Configuration, Structured Logging, Config Directory) formalized. ASPS updated to v1.2.0. Living document — will be updated as the company evolves. |
+| Status | v1.7.0 — Engineering Standards expanded to 15 non-negotiable principles. ASPS updated to v1.3.0. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -462,7 +462,7 @@ Current product status mapped to lifecycle phases:
 
 ### 3.13 — Project Structure Standard (ASPS)
 
-All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.2.0.md`.
+All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.3.0.md`.
 
 **Key requirements:**
 
@@ -499,7 +499,7 @@ Start with the simplest pattern that fits. Upgrade when complexity demands it.
 | arushai-hq/VizBoard | C (Frontend + Backend) | MEDIUM | ~30% aligned, needs restructure + living doc |
 | arushai-hq/arushai-os | Documentation | LIGHT | ~60% aligned, verify CLAUDE.md |
 
-Full specification: `docs/standards/ASPS-v1.2.0.md`.
+Full specification: `docs/standards/ASPS-v1.3.0.md`.
 
 ### 3.14 — Product Registry
 
@@ -613,31 +613,42 @@ Long CC sessions risk context window exhaustion. The protocol for managing this:
 - When context-mode is installed on a project: use the --continue flag when resuming multi-session builds to carry forward indexed context. Without --continue, previous session data is deleted.
 - The living document is the ultimate fallback for session continuity. If all else fails, the living document has the current state.
 
-### 4.9 — Code Standards
+### 4.9 — Engineering Standards — Non-Negotiable Principles
 
-Non-negotiable engineering standards for every ARUSHAI codebase. These were formalized after discovering hardcoded values and zero observability during the HULMI build — the same gaps exist in most early-stage projects. Enforcing these from day one prevents expensive retrofits later.
+Fifteen non-negotiable engineering standards for every ARUSHAI codebase. The first three were formalized after discovering hardcoded values and zero observability during the HULMI build. The remaining twelve were added after a gap analysis against Google, Apple, and Amazon engineering standards — and the critical discovery that HULMI shipped an entire MVP with zero test cases. These principles exist to prevent expensive retrofits and ensure production-readiness from the first line of code.
 
 ```mermaid
-flowchart LR
-    subgraph Sources
-        A["config/\nApp defaults\n(committed)"]
-        B[".env\nSecrets\n(gitignored)"]
-    end
+flowchart TD
+    ES[Engineering Standards<br/>15 Non-Negotiable Principles]
+    ES --> FDN[Foundation<br/>Day-one requirements]
+    ES --> QL[Quality<br/>Code health]
+    ES --> SEC[Resilience<br/>Production-ready]
+    ES --> SC[Scale<br/>Growth-ready]
 
-    subgraph Runtime
-        C["Application"]
-        D["Structured Logger\nJSON · levels · correlation IDs"]
-    end
+    FDN --> F1[1. Externalized config]
+    FDN --> F2[2. Structured logging]
+    FDN --> F3[3. Config directory]
+    FDN --> F4[4. Testing — no code without tests]
+    FDN --> F5[5. Error handling]
 
-    A --> C
-    B --> C
-    C --> D
-    D --> E["logs/\n(gitignored)"]
+    QL --> Q1[6. Input validation]
+    QL --> Q2[7. Type safety]
+    QL --> Q3[8. DRY + single responsibility]
+    QL --> Q4[9. Dependency management]
+    QL --> Q5[10. Code review]
 
-    style A fill:#d4edda,stroke:#28a745
-    style B fill:#f8d7da,stroke:#dc3545
-    style D fill:#cce5ff,stroke:#007bff
-    style E fill:#e2e3e5,stroke:#6c757d
+    SEC --> S1[11. Observability]
+    SEC --> S2[12. CI/CD quality gates]
+    SEC --> S3[13. Database migration discipline]
+
+    SC --> SC1[14. API versioning]
+    SC --> SC2[15. Environment parity]
+
+    style ES fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style FDN fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style QL fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style SEC fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style SC fill:#E6F1FB,stroke:#185FA5,color:#0C447C
 ```
 
 #### 4.9.1 — Externalized Configuration
@@ -680,6 +691,224 @@ Rules:
 - Project-specific domain configs (e.g., `ai.yaml`, `capture.yaml`) are encouraged for complex projects — they keep individual files focused and readable.
 
 Cross-reference: ASPS Section 10 (.gitignore Standard) enforces `config/secrets.yaml` exclusion. ASPS Sections 5.1–5.4 include `config/` in all composition patterns.
+
+#### 4.9.4 — Testing — No Code Without Tests
+
+This is the single most critical engineering standard. No production code is written without accompanying tests. Tests and code ship in the same commit — never separately.
+
+Rules:
+- Every function, endpoint, and component that contains logic MUST have at least one test.
+- Tests are written BEFORE or ALONGSIDE the code, never as an afterthought.
+- Every CC build prompt MUST include testing requirements and expected test count growth.
+- Test files live alongside or mirror the source structure (e.g., `src/auth.ts` → `tests/auth.test.ts`).
+- All tests must pass before any commit. Zero tolerance for failing tests.
+- The code-reviewer agent MUST verify test existence for every code change.
+
+Test pyramid (effort allocation):
+- **Unit tests (70%)** — test individual functions, pure logic, edge cases.
+- **Integration tests (20%)** — test module interactions, API endpoints, database queries.
+- **End-to-end tests (10%)** — test critical user journeys, smoke tests.
+
+Minimum coverage expectations by tier:
+- **LIGHT:** no formal requirement (but encouraged).
+- **MEDIUM:** unit tests for all business logic, integration tests for API endpoints.
+- **HEAVY:** full pyramid, minimum 80% line coverage, regression suite.
+
+The HULMI lesson: an entire MVP was built without a single test. Bugs that would have been caught by basic unit tests required retroactive fixes across the entire codebase. This principle exists to prevent that from ever happening again.
+
+#### 4.9.5 — Error Handling — Standardized Patterns
+
+Every failure path must be handled explicitly. No swallowed exceptions. No silent failures. No bare try/catch that discards the error.
+
+Rules:
+- Every function that can fail must handle failure explicitly with meaningful error messages.
+- Use typed/structured errors — not generic strings.
+- Standardized API error response format across all ARUSHAI products:
+```json
+{
+  "error": {
+    "code": "MACHINE_READABLE_CODE",
+    "message": "Human-readable description",
+    "details": {},
+    "request_id": "correlation-id"
+  }
+}
+```
+- Never expose internal stack traces, file paths, or system details in API error responses.
+- All caught exceptions must be logged at ERROR level with full context before being handled.
+- Use error boundaries in React/React Native for UI crash resilience.
+- Every external service call (API, database, file system) must have timeout + retry + fallback logic.
+
+Stack-specific patterns:
+- **Python:** custom exception hierarchy, never bare `except:`.
+- **TypeScript/Node:** typed error classes extending Error, never throw strings.
+- **React Native:** ErrorBoundary components wrapping every screen.
+
+#### 4.9.6 — Input Validation — Validate at Every Boundary
+
+All external data must be validated before processing. Never trust input from users, APIs, webhooks, config files, or any external source.
+
+Rules:
+- Use schema validation libraries — not manual if/else checks:
+  - TypeScript: Zod (preferred) or Joi
+  - Python: Pydantic (preferred) or marshmallow
+  - React Native: Zod for form validation
+- Validate at the boundary — the moment data enters the system (API route handler, webhook receiver, form submission).
+- Validate shape (correct fields exist), type (correct data types), range (within expected bounds), and format (email looks like email, URL looks like URL).
+- Return clear, specific validation error messages — not generic "invalid input".
+- Sanitize all user-provided strings before database storage or display (prevent XSS, SQL injection).
+- File uploads: validate file type, size, and content (not just extension).
+
+#### 4.9.7 — Type Safety
+
+Use type systems to catch errors at compile time rather than runtime. Untyped code is untested code with extra steps.
+
+Rules:
+- **TypeScript:** strict mode enabled (`strict: true` in tsconfig.json). No `any` type except in escape hatches documented with a comment explaining why.
+- **Python:** type hints on all function signatures. Use Pydantic models for data structures. Run mypy or pyright in CI.
+- **React Native:** TypeScript strict mode. All props typed. All state typed. All API response types defined.
+- **Database:** all queries use typed ORM or query builder — no raw string SQL without parameterization.
+- **Config:** all configuration values loaded through typed schemas (Zod, Pydantic) that validate on startup.
+
+#### 4.9.8 — DRY + Single Responsibility
+
+No duplicated logic. Each function, module, and component does one thing.
+
+Rules:
+- **DRY (Don't Repeat Yourself):** if the same logic appears in two places, extract it into a shared utility.
+- **Single Responsibility:** each function does one thing and does it well. If a function name contains "and" (`processAndSave`, `validateAndSubmit`), split it.
+- **YAGNI (You Aren't Gonna Need It):** implement only what is needed now. Don't build for speculative future requirements.
+- Keep functions short — if a function exceeds 40 lines, it's likely doing too much. Extract sub-functions.
+- Keep files focused — one module per concern. A file called `utils.ts` that grows past 200 lines needs to be split into focused utilities.
+
+#### 4.9.9 — Dependency Management — Pin and Audit
+
+All third-party dependencies are version-pinned and regularly audited for vulnerabilities.
+
+Rules:
+- All dependencies version-pinned with exact versions (`==` not `>=` or `^`):
+  - Python: `requirements.txt` with `==` pins, or `poetry.lock`
+  - Node.js: `package-lock.json` or `pnpm-lock.yaml` committed to git
+- Lock files ALWAYS committed to git — never gitignored.
+- No dependency added without justification — prefer standard library over third-party when reasonable.
+- Audit dependencies regularly:
+  - `npm audit` / `pnpm audit` for Node.js
+  - `pip-audit` or `safety` for Python
+- Before adding a new dependency, check: maintenance status (last commit), download count, known vulnerabilities, license compatibility.
+- Minimize dependency count — every dependency is a supply chain risk.
+
+#### 4.9.10 — Code Review — Every Change Reviewed
+
+Every code change must be reviewed before merging to the main branch. In ARUSHAI's context, the code-reviewer agent serves this role.
+
+Rules:
+- The code-reviewer agent (ASPS Section 7.4) MUST review every code change.
+- Review checklist: security, error handling, test coverage, naming conventions, documentation, no dead code, no unused imports.
+- No direct commits to main — all changes via feature branches.
+- Review must verify: tests exist AND pass, no hardcoded config values, structured logging present, input validation at boundaries.
+- The reviewer checks for what's MISSING, not just what's present — missing tests, missing error handling, missing validation.
+
+#### 4.9.11 — Observability — Health Checks + Metrics + Alerts
+
+Beyond logging (Principle 2), production services must be observable — you must be able to answer "is the system healthy right now?" without reading logs.
+
+Rules by tier:
+
+**MEDIUM tier:**
+- Health check endpoint (`/health` or `/healthz`) returning service status + dependency status.
+- Basic metrics: request count, error rate, response time (can be logged, doesn't need Prometheus).
+- Uptime monitoring (even a simple curl-based check).
+
+**HEAVY tier:**
+- Health check with dependency checks (database, external APIs, queue).
+- Structured metrics: request count, error rate, latency percentiles (p50, p95, p99).
+- Alerting: automated notification (Telegram, email, or PagerDuty) when error rate spikes or service goes down.
+- Dashboard: visual overview of system health (can be as simple as a Grafana board or custom page).
+
+#### 4.9.12 — CI/CD Quality Gates
+
+Automated checks that must pass before code reaches production. Currently manual in ARUSHAI (CC runs tests, human verifies). The goal is to progressively automate.
+
+**Current state (manual gates — enforce NOW):**
+- All tests must pass before merge (CC runs `pytest` / `npm test`).
+- No linting errors (CC runs linter).
+- code-reviewer agent approves.
+- Living document updated.
+
+**Future state (automated gates — implement progressively):**
+- GitHub Actions or similar CI pipeline.
+- Automated test run on every push.
+- Automated lint check on every push.
+- Security dependency scan on every push.
+- Block merge if any gate fails.
+
+For now, every CC build prompt must include explicit "run tests and confirm all pass" as an acceptance criterion. This is the manual equivalent of a CI gate.
+
+#### 4.9.13 — Database Migration Discipline
+
+Schema changes are versioned, reversible, and never applied manually.
+
+Rules:
+- All schema changes via migration files — never manual SQL in production.
+- Migration files are numbered/timestamped and committed to git.
+- Every migration must have a rollback/down path.
+- Migrations run in order, are idempotent, and are tested before deployment.
+- Never modify a migration that has already been applied to production — create a new migration instead.
+- Stack-specific:
+  - Supabase: use Supabase migrations CLI.
+  - Python/SQLAlchemy: Alembic migrations.
+  - Node.js: Prisma migrations or knex migrations.
+
+#### 4.9.14 — API Versioning — Version From Day One
+
+Every API that serves external consumers (including mobile apps) must be versioned from its first endpoint.
+
+Rules:
+- URL path versioning is the ARUSHAI standard: `/api/v1/resource`.
+- Version exists from the first endpoint — don't "add versioning later."
+- Breaking changes require a new version (v2). Non-breaking additions are fine within existing version.
+- Deprecated versions must remain functional for at least 3 months after replacement is available.
+- API responses include a consistent shape across all endpoints:
+```json
+{
+  "success": true,
+  "data": {},
+  "meta": { "version": "v1", "request_id": "..." }
+}
+```
+
+#### 4.9.15 — Environment Parity
+
+Development, staging, and production environments must behave identically. "Works on my machine" is not acceptable.
+
+Rules:
+- Use Docker/containers for local development when the project has backend services.
+- Environment-specific configuration via environment variables or config files — never code-level if/else for environments.
+- Database schema identical across environments (migration discipline handles this).
+- All environment variables documented in `config/secrets.example.yaml` or `.env.example`.
+- Production secrets never used in development — use separate credentials per environment.
+
+#### Enforcement by Tier
+
+| # | Principle | LIGHT | MEDIUM | HEAVY |
+|---|-----------|-------|--------|-------|
+| 1 | Externalized config | Required | Required | Required |
+| 2 | Structured logging | Recommended | Required | Required |
+| 3 | Config directory | Required | Required | Required |
+| 4 | Testing — no code without tests | Recommended | Required | Required |
+| 5 | Error handling | Recommended | Required | Required |
+| 6 | Input validation | Recommended | Required | Required |
+| 7 | Type safety | Recommended | Required | Required |
+| 8 | DRY + single responsibility | Recommended | Required | Required |
+| 9 | Dependency management | Required | Required | Required |
+| 10 | Code review | Optional | Required | Required |
+| 11 | Observability | Optional | Basic | Full |
+| 12 | CI/CD quality gates | Optional | Manual | Automated |
+| 13 | Database migration discipline | N/A | Required | Required |
+| 14 | API versioning | N/A | Required | Required |
+| 15 | Environment parity | Optional | Recommended | Required |
+
+Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review.
 
 ---
 
@@ -1261,3 +1490,4 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.4.0 | 2026-03-15 | ASPS updated to v1.1.0 (Agent Architecture Standard added). |
 | 1.5.0 | 2026-03-15 | Formalized 8-phase product lifecycle pipeline with decision gates. Added Diagram-First Documentation principle (Section 5.8). Section 3 rewritten with Mermaid flowchart. |
 | 1.6.0 | 2026-03-15 | Added Section 4.9: Code Standards (Externalized Configuration, Structured Logging from Day One, Config Directory). ASPS updated to v1.2.0. Scaffold skill updated with config templates. |
+| 1.7.0 | 2026-03-16 | Expanded Engineering Standards from 3 to 15 non-negotiable principles. Added: Testing (no code without tests), Error Handling, Input Validation, Type Safety, DRY + Single Responsibility, Dependency Management, Code Review, Observability, CI/CD Quality Gates, Database Migration Discipline, API Versioning, Environment Parity. Added enforcement tier table. ASPS updated to v1.3.0. |
