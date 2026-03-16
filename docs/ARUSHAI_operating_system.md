@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.8.0 |
+| Version | 1.9.0 |
 | Last Updated | 2026-03-16 |
 | Author | Irfan |
-| Status | v1.8.0 — Cultural Principles + Operational Standards added. 6 cultural principles + 23 engineering/operational standards. PRR gate in lifecycle pipeline. Living document — will be updated as the company evolves. |
+| Status | v1.9.0 — Security Standards + Compliance Roadmap added. 6 cultural principles + 29 engineering/operational/security standards. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -971,7 +971,18 @@ Rules:
 | 22 | Performance baselines | Optional | Targets defined | Load tested |
 | 23 | Accessibility / i18n | N/A | i18n framework | i18n + a11y tested |
 
-Total: 6 cultural principles + 23 engineering/operational standards.
+**Security Standards (Principles 24-29):**
+
+| # | Standard | LIGHT | MEDIUM | HEAVY |
+|---|----------|-------|--------|-------|
+| 24 | Audit trail | Recommended | Required | Required (tamper-resistant) |
+| 25 | Encryption at rest | N/A | Required for personal data | Required for all data |
+| 26 | MFA everywhere | Required | Required | Required |
+| 27 | Access control register | Recommended | Required (quarterly review) | Required (quarterly review) |
+| 28 | Data inventory | N/A | Required for personal data products | Required |
+| 29 | Secure development lifecycle | Recommended | Required | Required |
+
+Total: 6 cultural principles + 29 engineering/operational/security standards.
 
 Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review.
 
@@ -1225,6 +1236,179 @@ Tier enforcement:
 - **LIGHT:** not applicable (internal tools).
 - **MEDIUM:** i18n framework installed, RTL-ready CSS, externalized strings.
 - **HEAVY:** all MEDIUM plus a11y testing, WCAG AA compliance on critical flows.
+
+### 4.11 — Security Standards — Day-One Practices
+
+Non-negotiable security practices for any ARUSHAI project that handles user data. These are implemented from the first line of code — not bolted on before launch.
+
+```mermaid
+flowchart TD
+    SS[Security Standards<br/>6 Day-One Practices]
+    SS --> AT[Audit trail]
+    SS --> ER[Encryption at rest]
+    SS --> MF[MFA everywhere]
+    SS --> AC[Access control register]
+    SS --> DI[Data inventory]
+    SS --> SDL[Secure development lifecycle]
+
+    AT --> AT1[Every change logged<br/>with timestamp + actor]
+    ER --> ER1[All personal data<br/>encrypted in database]
+    MF --> MF1[GitHub, VPS, cloud, DB<br/>No exceptions]
+    AC --> AC1[Who has access to what<br/>Reviewed quarterly]
+    DI --> DI1[Per product: what data,<br/>where, how protected]
+    SDL --> SDL1[Security review in<br/>every build cycle]
+
+    style SS fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style AT fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style ER fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style MF fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style AC fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style DI fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style SDL fill:#FAEEDA,stroke:#854F0B,color:#633806
+```
+
+#### 4.11.1 — Audit Trail
+
+Every significant system action must produce an immutable, timestamped log record. This is the single most important practice for future certification and IPO readiness.
+
+What must be logged:
+- All data creation, modification, and deletion events (who changed what, when, from what value to what value).
+- All authentication events (login, logout, failed login, token refresh).
+- All authorization events (access granted, access denied).
+- All configuration changes (settings modified, features toggled).
+- All deployment events (code deployed, rollback executed).
+- All administrative actions (user created, permissions changed, data exported).
+
+Audit log requirements:
+- **Immutable** — audit logs cannot be modified or deleted by the application. Write-only access.
+- **Timestamped** — UTC timestamps on every record, with millisecond precision.
+- **Actor identified** — every log record includes who performed the action (user ID, system process, or API key identifier).
+- **Structured** — JSON format, consistent schema across all products.
+- **Retained** — minimum 1 year retention for audit logs (separate from application logs which follow the 30/90 day rotation).
+- **Separate from application logs** — audit logs are a distinct stream, not mixed with debug/info application logs.
+
+Audit log schema:
+```json
+{
+  "timestamp": "2026-03-16T10:30:00.000Z",
+  "event_type": "data.modified",
+  "actor": { "type": "user", "id": "usr_123" },
+  "resource": { "type": "thought", "id": "tht_456" },
+  "action": "update",
+  "details": { "field": "category", "old": "idea", "new": "project" },
+  "source_ip": "203.0.113.42",
+  "request_id": "req_abc789"
+}
+```
+
+Implementation by tier:
+- **LIGHT:** application-level logging sufficient (structured logs with actor + action).
+- **MEDIUM:** dedicated audit log table/collection, write-only access, 1-year retention.
+- **HEAVY:** dedicated audit log with tamper detection, separate storage, automated compliance reporting.
+
+Why this matters: ISO 27001 requires evidence of access control and change management. SOC 2 requires demonstrable audit trails. SOX (for IPO) requires internal controls with auditable evidence. Starting this from day one means ARUSHAI's entire history is auditable — retroactively adding audit trails is nearly impossible.
+
+#### 4.11.2 — Encryption at Rest
+
+All personal, sensitive, or confidential data must be encrypted when stored in databases, file systems, or backups.
+
+Rules:
+- **Database encryption:** enable at the database level (Supabase enables this by default; PostgreSQL with pgcrypto for field-level; TimescaleDB via transparent data encryption).
+- **File storage encryption:** all user-uploaded files stored with server-side encryption (Supabase Storage enables this by default; S3 with SSE-S3 or SSE-KMS).
+- **Backup encryption:** all database and file backups must be encrypted.
+- **Sensitive fields:** passwords are never stored (only bcrypt/argon2 hashes), API keys are stored encrypted, personal data (email, phone, voice notes) encrypted at rest.
+- **Encryption keys:** managed separately from encrypted data. Never store encryption keys in the same database or repository as the data they protect.
+
+Verification: for every product in the Product Registry, the PRR checklist must confirm "encryption at rest: YES" with specific details of how it's implemented.
+
+#### 4.11.3 — MFA Everywhere
+
+Multi-Factor Authentication must be enabled on all infrastructure and service accounts. No exceptions.
+
+Mandatory MFA targets:
+- GitHub (all arushai-hq organization members).
+- VPS/server access (SSH key + passphrase minimum; TOTP preferred).
+- Cloud provider consoles (Supabase, Vercel, Hostinger, etc.).
+- Database admin access (if direct access exists).
+- Domain registrar (DNS is a critical attack surface).
+- Email accounts used for ARUSHAI business.
+- Any service that stores ARUSHAI code, data, or credentials.
+
+Rules:
+- TOTP (Time-based One-Time Password) is the minimum acceptable MFA method.
+- SMS-based MFA is not acceptable as primary (SIM-swap vulnerability).
+- Hardware keys (YubiKey) are preferred for critical infrastructure when available.
+- Recovery codes must be stored securely and separately from the devices they protect.
+
+Enforcement: document all MFA-protected services in the Access Control Register (4.11.4). Review quarterly.
+
+#### 4.11.4 — Access Control Register
+
+A documented, maintained register of who has access to what systems, at what privilege level, reviewed quarterly.
+
+Register format stored in `docs/security/access-control-register.md`. The register includes:
+- System name, account/role, access level, MFA status, purpose, last reviewed date.
+- Service accounts (API keys, bot tokens) with rotation schedule.
+- Review log documenting every quarterly review.
+
+Rules:
+- Register reviewed and updated quarterly (add calendar reminder).
+- When any team member leaves or role changes, access updated within 24 hours.
+- Principle of least privilege: every account gets minimum access needed for its role.
+- Service accounts (API keys, bot tokens) are included in the register.
+- Dormant accounts (unused >90 days) are disabled.
+- Register is versioned in git (every update is a commit with what changed).
+
+For a one-person operation (current state), this register is simple but the discipline of maintaining it is what matters. When ARUSHAI grows, the register scales naturally because the habit exists.
+
+#### 4.11.5 — Data Inventory
+
+Every product that handles user data must maintain a data inventory documenting what personal data is collected, where it's stored, how it's protected, and how long it's retained.
+
+Data inventory format stored in each product's `docs/security/data-inventory.md`:
+
+| Data Type | Examples | Storage Location | Encrypted | Retention | Lawful Basis | Deletion Process |
+|---|---|---|---|---|---|---|
+| Voice recordings | User voice notes | Supabase Storage | Yes (SSE) | Until user deletes | Consent | User-initiated via app |
+| Transcriptions | Text from voice notes | Supabase DB | Yes (TDE) | Until user deletes | Consent | Cascade from thought deletion |
+| User profile | Email, name | Supabase Auth | Yes (TDE) | Account lifetime | Contract | Account deletion request |
+| Usage analytics | Screen views, actions | Application logs | No | 90 days | Legitimate interest | Automatic rotation |
+
+Rules:
+- Data inventory created during Phase 3 (Architecture) — before any code is written.
+- Updated when new data types are added to the product.
+- Must include third-party data sharing (e.g., "voice notes sent to Deepgram for transcription — Deepgram's data retention policy: [link]").
+- For GDPR/Qatar PDPL compliance: lawful basis documented for each data type.
+- Deletion process documented and tested for each data type.
+
+This inventory feeds directly into the PRR checklist (privacy section) and is the foundation for any future certification audit.
+
+#### 4.11.6 — Secure Development Lifecycle
+
+Security is integrated into every phase of the product lifecycle — not bolted on at the end.
+
+Per-phase security activities:
+
+| Phase | Security Activity |
+|---|---|
+| 3. PRD + Architecture | Data inventory created. Privacy decisions documented as ADRs. Threat model for critical flows. |
+| 5. Skills + Agents | Security skill installed. code-reviewer agent includes security checklist. |
+| 6. Build | Every CC prompt includes security requirements. Input validation on all boundaries. No secrets in code. Dependency audit on every new package. |
+| 6.5 PRR | Full security section of PRR checklist must pass. |
+| 7. Deploy | HTTPS enforced. MFA verified. Encryption at rest confirmed. Backup encryption verified. |
+| 8. Operate | Quarterly access review. Dependency audit. Security post-mortem for any security incident. |
+
+The code-reviewer agent's checklist must include:
+- No secrets, tokens, or credentials in code.
+- Input validation present on all external boundaries.
+- No SQL injection vectors (parameterized queries only).
+- No XSS vectors (output encoding/sanitization).
+- Authentication required on all protected endpoints.
+- Authorization checks at the resource level (not just route level).
+- Error messages don't leak internal details.
+- All external calls have timeouts.
+
+Cross-reference: OSD Section 7 (Security and Governance Framework) covers company-wide security policies. This section covers day-one engineering security practices. The Compliance Readiness Roadmap at `docs/compliance/compliance-roadmap.md` maps these practices to ISO 27001, SOC 2, and IPO readiness.
 
 ---
 
@@ -1494,6 +1678,8 @@ The financial goal: Each product should individually justify its costs within 3-
 Security is the one thing ARUSHAI never compromises. Not for speed, not for convenience, not for cost savings. A security breach can destroy trust, lose money, and set back years of work in a single incident. Every other feature, optimization, or convenience is secondary to security.
 
 This framework starts with what can be enforced today (single operator, manual processes) and defines the path toward automated enforcement as the company matures through the Stage progression. The principles are permanent. The implementation evolves.
+
+Cross-reference: Section 4.11 (Security Standards) covers day-one engineering security practices (audit trail, encryption, MFA, access control, data inventory, secure development lifecycle). The Compliance Readiness Roadmap at `docs/compliance/compliance-roadmap.md` maps ARUSHAI's path to ISO 27001, SOC 2, and IPO readiness.
 
 ### 7.2 — The Security-First Principle
 
@@ -1808,3 +1994,4 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.6.0 | 2026-03-15 | Added Section 4.9: Code Standards (Externalized Configuration, Structured Logging from Day One, Config Directory). ASPS updated to v1.2.0. Scaffold skill updated with config templates. |
 | 1.7.0 | 2026-03-16 | Expanded Engineering Standards from 3 to 15 non-negotiable principles. Added: Testing (no code without tests), Error Handling, Input Validation, Type Safety, DRY + Single Responsibility, Dependency Management, Code Review, Observability, CI/CD Quality Gates, Database Migration Discipline, API Versioning, Environment Parity. Added enforcement tier table. ASPS updated to v1.3.0. |
 | 1.8.0 | 2026-03-16 | Added Cultural Principles (6 foundational values: Users First, Blameless Culture, Freedom + Responsibility, Design for Failure, Dogfooding, Nemawashi). Added Operational Standards (PRR gate, blameless post-mortem, rollback discipline, data backup + DR, changelog + versioning, privacy by design, performance baselines, accessibility + i18n). Total: 6 cultural principles + 23 engineering/operational standards. Updated product lifecycle pipeline with PRR gate (Phase 6.5). |
+| 1.9.0 | 2026-03-16 | Added Security Standards (audit trail, encryption at rest, MFA everywhere, access control register, data inventory, secure development lifecycle). Created Compliance Readiness Roadmap (ISO 27001, SOC 2, IPO). Created Access Control Register template. Total standards: 29. |

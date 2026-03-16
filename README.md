@@ -18,6 +18,10 @@ Every ARUSHAI product repo and every future AI agent references this document as
   - [ASPS v1.3.0](docs/standards/ASPS-v1.3.0.md) — ARUSHAI Standard Project Structure: folder structure, CC configuration, CLAUDE.md templates, tier system, agent architecture, engineering standards, and composition patterns for all repos
 - [Forge Sessions](docs/forge-sessions/) — research and discovery session summaries
   - [FORGE-001](docs/forge-sessions/FORGE-001-summary.md) — Foundations of Reasoning, Grounding & Engineering
+- [Compliance](docs/compliance/) — compliance readiness and certification planning
+  - [Compliance Roadmap](docs/compliance/compliance-roadmap.md) — ISO 27001, SOC 2, and IPO readiness path
+- [Security](docs/security/) — security governance documents
+  - [Access Control Register](docs/security/access-control-register.md) — who has access to what (reviewed quarterly)
 - [Templates](docs/templates/) — standard templates used across ARUSHAI projects
   - [CC Prompt Template](docs/templates/cc-prompt-template.md) — the mandatory prompt format for all CC interactions
 
