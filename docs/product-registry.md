@@ -9,7 +9,7 @@ Living document tracking all ARUSHAI Systems products. Updated when products cha
 | TradeOS | arushai-hq/tradeOS | B (Engine+Tools) | HEAVY | Operate | Active paper trading, S1 strategy, 499 tests | AI-powered algorithmic trading system for NSE intraday equities |
 | Flint | arushai-hq/flint-app | A (Single-Stack) | MEDIUM | Build | Core UI + AI engine built, pre-deployment | AI-powered message polishing for professionals |
 | VIZBOARD | arushai-hq/VizBoard | C (Frontend+Backend) | MEDIUM | Build | v0.1 build prompt generated, execution pending | Internal visual strategy board tool for client meetings |
-| HULMI | arushai-hq/hulmi | A (Single-Stack) | MEDIUM | Deploy | MVP code-complete (B1-B8), testing foundation (B9) pending, Phase 7 blocked | Zero-friction thought capture via messaging apps + AI-powered contextual resurfacing |
+| HULMI | arushai-hq/hulmi | C (Frontend+Backend) | MEDIUM | Deploy | v0.1.0. OSD v1.9.0 compliant. PRR passed. 212+ tests. Ready for dogfooding deployment. | Zero-friction thought capture via messaging apps + AI-powered contextual resurfacing |
 
 ## Archived / Deprecated
 
@@ -30,4 +30,4 @@ Ideas identified but not yet in Research phase:
 ---
 
 Last Updated: 2026-03-16
-Updated By: FORGE-002 handoff — HULMI testing gap identified, Phase 7 blocked
+Updated By: HULMI Phase 6.5 PRR passed — all code-side items verified, Phase 7 (Deploy) ready
