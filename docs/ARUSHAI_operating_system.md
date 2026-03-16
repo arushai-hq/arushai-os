@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.7.0 |
+| Version | 1.8.0 |
 | Last Updated | 2026-03-16 |
 | Author | Irfan |
-| Status | v1.7.0 — Engineering Standards expanded to 15 non-negotiable principles. ASPS updated to v1.3.0. Living document — will be updated as the company evolves. |
+| Status | v1.8.0 — Cultural Principles + Operational Standards added. 6 cultural principles + 23 engineering/operational standards. PRR gate in lifecycle pipeline. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -78,6 +78,48 @@ Build a multi-generational wealth platform from the ground up. ARUSHAI is not a 
 - Problem-first approach: starts with the human problem, works backward to the technology solution.
 - Multi-generational intent: decisions are made for decades, not quarters.
 - The motivation behind the company — family, legacy, and genuine desire to help others — drives a discipline that pure profit-seeking cannot sustain.
+
+### ARUSHAI Cultural Principles
+
+Six foundational values that every process, standard, and decision traces back to. These are permanent and non-negotiable.
+
+```mermaid
+flowchart TD
+    CP[ARUSHAI Cultural Principles]
+    CP --> UF[Users first]
+    CP --> BC[Blameless culture]
+    CP --> FR[Freedom + responsibility]
+    CP --> DF[Design for failure]
+    CP --> DF2[Dogfooding]
+    CP --> NM[Nemawashi]
+
+    UF --> UF1[Every decision traces<br/>back to user impact]
+    BC --> BC1[Post-mortems focus on<br/>systems, not people]
+    FR --> FR1[Own your code<br/>end-to-end]
+    DF --> DF1[Assume everything<br/>will break]
+    DF2 --> DF3[We are user zero<br/>for every product]
+    NM --> NM1[70-80% planning<br/>20-30% implementation]
+
+    style CP fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style UF fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style BC fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style FR fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style DF fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style DF2 fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style NM fill:#E1F5EE,stroke:#0F6E56,color:#085041
+```
+
+**Principle 1 — Users First:** Every decision — technical, product, architectural — traces back to user impact. Not "what's technically elegant" but "what makes the user's life better." When in doubt about a tradeoff, choose the path that improves the user experience. This applies to internal tools (ARUSHAI team is the user) and external products (customers are users). Inspired by Stripe's operating principle: deeply understand users and work backwards from their needs.
+
+**Principle 2 — Blameless Culture:** Failure is a learning opportunity, not a blame assignment. When things break — and they will — the response is a blameless post-mortem that focuses on systems, processes, and gaps. Never on individuals. The question is always "what in our system allowed this to happen?" not "who caused this?" This applies to: production incidents, missed deadlines, architectural mistakes, and any situation where the outcome didn't match expectations. Inspired by Google's engineering culture: humility, respect, trust, and a blameless postmortem process.
+
+**Principle 3 — Freedom and Responsibility:** Every engineer (human or AI agent) owns their work end-to-end. They build it, they test it, they deploy it, they monitor it, they fix it when it breaks. Autonomy is given generously, but accountability is non-negotiable. The code-reviewer agent exists not as a gatekeeper but as a safety net — the primary responsibility for quality rests with whoever writes the code. Inspired by Netflix: freedom to be creative, responsibility to deliver outstanding work.
+
+**Principle 4 — Design for Failure:** Assume everything will break. External APIs will go down. Databases will slow. Networks will partition. Users will provide unexpected input. The question is never "will this fail?" but "what happens when this fails?" Every system must have: timeouts on external calls, retry logic with backoff, graceful degradation when dependencies are unavailable, rollback paths for deployments, and data backup strategies. Inspired by Stripe: design and build defensive systems with failures in mind.
+
+**Principle 5 — Dogfooding:** We are user zero for every product we build. Build it for ARUSHAI's own use first, validate it internally, then open as a product when confident. If we won't use it daily, we shouldn't ship it. This ensures we feel the friction our users will feel and fix it before they encounter it. This principle was established in FORGE-001 and is permanent.
+
+**Principle 6 — Nemawashi:** Preparing the roots before transplanting the tree. 70-80% planning, 20-30% implementation. Deep-dive research, edge case mapping, cost modeling, and approach comparison MUST happen before any implementation begins. No rushing to code. This principle was established in TradeOS-01 and is permanent.
 
 ---
 
@@ -234,6 +276,7 @@ flowchart TD
     P5[5. Skills + Agents Install<br/>CC prompt #2]
     G3{Skills + agents ready?}
     P6[6. Build<br/>CC prompts #3, #4, #5...]
+    G4{PRR passed?}
     P7[7. Deploy<br/>CC prompt]
     P8[8. Operate<br/>CC + Web session ongoing]
 
@@ -249,7 +292,9 @@ flowchart TD
     P5 --> G3
     G3 -->|Yes| P6
     G3 -->|No| P5
-    P6 --> P7
+    P6 --> G4
+    G4 -->|Yes| P7
+    G4 -->|No| P6
     P7 --> P8
 
     style P1 fill:#EEEDFE,stroke:#534AB7,color:#3C3489
@@ -263,6 +308,7 @@ flowchart TD
     style G1 fill:#FAEEDA,stroke:#854F0B,color:#633806
     style G2 fill:#FAEEDA,stroke:#854F0B,color:#633806
     style G3 fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style G4 fill:#FAEEDA,stroke:#854F0B,color:#633806
     style HO fill:#FAECE7,stroke:#993C1D,color:#712B13
     style PARK fill:#F1EFE8,stroke:#5F5E5A,color:#444441
 ```
@@ -398,6 +444,8 @@ Phases 1-3 produce planning artifacts. Phase 4 begins execution. The handoff is 
 
 **Quality Gate:** All acceptance criteria met. Full test suite passes with zero failures. No known regressions.
 
+**Phase 6.5 — Production Readiness Review (PRR):** Before proceeding to Deploy, the product must pass the Production Readiness Review defined in the Operational Standards section. This is a formal gate — not optional for MEDIUM and HEAVY tier products. The PRR verifies testing, security, observability, deployment, disaster recovery, and documentation readiness. Three items are non-negotiable blockers: observability (structured logging + health check + error alerting), rollback (tested rollback procedure), and data backup (configured and tested).
+
 ### 3.9 — Phase 7: Deploy (CC Prompt)
 
 **Purpose:** Put the product into production and verify it behaves correctly in the real environment.
@@ -413,7 +461,7 @@ Phases 1-3 produce planning artifacts. Phase 4 begins execution. The handoff is 
 
 **The Monitoring Philosophy:** Production is not "set and forget." Every deployed product is actively monitored. Missed notifications or unexpected silence from monitoring triggers immediate investigation.
 
-**Output:** Product live in production with active monitoring. No critical bugs in the first 24-48 hours. Monitoring notifications arriving on schedule.
+**Output:** Product live in production with active monitoring. No critical bugs in the first 24-48 hours. Monitoring notifications arriving on schedule. Rollback procedure tested. Backups configured. Monitoring active.
 
 ### 3.10 — Phase 8: Operate (CC + Web Session)
 
@@ -441,7 +489,7 @@ Phases 1-3 produce planning artifacts. Phase 4 begins execution. The handoff is 
 
 The default is to iterate, not to kill. Products are given multiple iteration cycles before a sunset decision. But cost-awareness is maintained — a product running at a loss with no improvement trajectory is paused, not left running indefinitely.
 
-**Output:** Ongoing stable operation with monitoring. Bugs fixed, features added through the standard lifecycle. Periodic session debriefs documented. Clear-eyed evaluation of product viability at regular intervals.
+**Output:** Ongoing stable operation with monitoring. Bugs fixed, features added through the standard lifecycle. Periodic session debriefs documented. Clear-eyed evaluation of product viability at regular intervals. Blameless post-mortems for all incidents. Changelog maintained. Quarterly backup restore test.
 
 ### 3.11 — Key Rules
 
@@ -890,6 +938,8 @@ Rules:
 
 #### Enforcement by Tier
 
+**Engineering Standards (Principles 1-15):**
+
 | # | Principle | LIGHT | MEDIUM | HEAVY |
 |---|-----------|-------|--------|-------|
 | 1 | Externalized config | Required | Required | Required |
@@ -908,7 +958,273 @@ Rules:
 | 14 | API versioning | N/A | Required | Required |
 | 15 | Environment parity | Optional | Recommended | Required |
 
+**Operational Standards (Principles 16-23):**
+
+| # | Standard | LIGHT | MEDIUM | HEAVY |
+|---|----------|-------|--------|-------|
+| 16 | Production Readiness Review | Optional | Required | Required |
+| 17 | Blameless post-mortem | Optional | Required | Required |
+| 18 | Rollback discipline | Optional | Required | Required |
+| 19 | Data backup + DR | N/A | Basic (daily, 7-day) | Full (daily, 30-day, tested) |
+| 20 | Changelog + versioning | Recommended | Required | Required |
+| 21 | Privacy by design | Optional | Required for personal data | Required |
+| 22 | Performance baselines | Optional | Targets defined | Load tested |
+| 23 | Accessibility / i18n | N/A | i18n framework | i18n + a11y tested |
+
+Total: 6 cultural principles + 23 engineering/operational standards.
+
 Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review.
+
+### 4.10 — Operational Standards
+
+Standards that govern what happens when products go live and how we handle the inevitable failures. These complement the engineering standards (4.9) by covering production operations, incident response, and long-term product health.
+
+#### 4.10.1 — Production Readiness Review (PRR)
+
+Every product must pass a Production Readiness Review before moving from Phase 6 (Build) to Phase 7 (Deploy). This is a formal gate — not optional. The PRR is a checklist that must be demonstrated, not just described. Binary pass/fail — either the capability exists or it doesn't.
+
+```mermaid
+flowchart TD
+    PRR[Production Readiness Review]
+    PRR --> T[Testing]
+    PRR --> S[Security]
+    PRR --> O[Observability]
+    PRR --> D[Deployment]
+    PRR --> DR[Disaster Recovery]
+    PRR --> DOC[Documentation]
+
+    T --> T1[All tests passing]
+    T --> T2[Coverage meets tier requirement]
+    T --> T3[Edge cases tested]
+
+    S --> S1[No secrets in code]
+    S --> S2[Input validation on all boundaries]
+    S --> S3[Auth + authorization verified]
+    S --> S4[Dependency audit clean]
+
+    O --> O1[Health check endpoint exists]
+    O --> O2[Structured logging in place]
+    O --> O3[Alerting configured]
+    O --> O4[Error tracking active]
+
+    D --> D1[Rollback procedure tested]
+    D --> D2[Environment parity verified]
+    D --> D3[CI/CD pipeline working]
+
+    DR --> DR1[Data backup configured]
+    DR --> DR2[Recovery procedure documented]
+    DR --> DR3[Backup restore tested]
+
+    DOC --> DOC1[README current]
+    DOC --> DOC2[Runbooks written]
+    DOC --> DOC3[API docs complete]
+
+    style PRR fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style T fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style S fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style O fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+    style D fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style DR fill:#FBEAF0,stroke:#993556,color:#72243E
+    style DOC fill:#F1EFE8,stroke:#5F5E5A,color:#444441
+```
+
+**Testing:**
+- All tests passing (unit + integration + e2e as appropriate).
+- Test coverage meets tier requirement (MEDIUM: business logic covered; HEAVY: 80%+ line coverage).
+- Critical user journeys have end-to-end tests.
+- Edge cases and error paths tested.
+
+**Security:**
+- No secrets, tokens, or credentials in committed code.
+- Input validation on all external boundaries (API, webhooks, forms).
+- Authentication and authorization verified on all protected endpoints.
+- Dependency vulnerability audit clean (`npm audit` / `pip-audit`).
+- HTTPS enforced for all external communication.
+- Rate limiting on public endpoints.
+
+**Observability:**
+- Health check endpoint exists and returns meaningful status.
+- Structured logging (JSON format) on all services.
+- Error tracking configured (errors reported to a channel — Telegram, email, or dedicated service).
+- Key metrics identifiable (request count, error rate, latency).
+
+**Deployment:**
+- Rollback procedure documented AND tested (not just documented).
+- Environment variables documented in `.env.example` or `config/secrets.example.yaml`.
+- Docker or equivalent containerization for environment parity.
+- Deployment can be performed with a single command or script.
+
+**Disaster Recovery:**
+- Database backup configured and running on schedule.
+- Backup restore procedure documented AND tested at least once.
+- Recovery time objective (RTO) defined — how long until service is restored.
+- Recovery point objective (RPO) defined — how much data loss is acceptable.
+
+**Documentation:**
+- README.md current and accurate.
+- CLAUDE.md current and under 200 lines.
+- Living document (`{project}_context.md`) current.
+- Runbooks for operational procedures (daily ops, incident response, deployment).
+- API documentation complete (if API exists).
+
+**Three non-negotiable blockers** — if ANY of these fail, the product cannot deploy regardless of all other checks:
+1. **Observability** (structured logging + health check + error alerting)
+2. **Rollback** (tested rollback procedure)
+3. **Data backup** (configured and tested)
+
+#### 4.10.2 — Blameless Post-Mortem
+
+When incidents occur (production bugs, outages, data issues, or any situation where the system didn't behave as expected), a blameless post-mortem is conducted.
+
+Post-mortem template (store in `docs/post-mortems/{YYYY-MM-DD}-{incident-slug}.md`):
+
+```markdown
+# Post-Mortem: {Incident Title}
+
+**Date:** YYYY-MM-DD
+**Severity:** SEV-1 (critical) | SEV-2 (major) | SEV-3 (minor) | SEV-4 (cosmetic)
+**Duration:** {time from detection to resolution}
+**Impact:** {what users experienced}
+
+## Timeline
+- HH:MM — {event}
+- HH:MM — {event}
+- HH:MM — {event resolved}
+
+## Root Cause
+{What in the SYSTEM allowed this to happen — not who caused it}
+
+## What Went Well
+- {things that worked during response}
+
+## What Went Wrong
+- {process/system gaps that allowed or prolonged the incident}
+
+## Action Items
+| # | Action | Owner | Deadline | Status |
+|---|--------|-------|----------|--------|
+| 1 | {fix} | {who} | {when} | Open |
+
+## Lessons Learned
+{What we now know that we didn't know before}
+```
+
+Severity classification:
+- **SEV-1:** Service completely unavailable or data loss. Immediate response required.
+- **SEV-2:** Major feature broken, workaround exists. Response within hours.
+- **SEV-3:** Minor feature broken, low user impact. Response within days.
+- **SEV-4:** Cosmetic issue, no functional impact. Response in next sprint.
+
+The TradeOS session debrief pattern (grep logs → identify bugs → catalogue → fix → verify) is the informal version of this. This standard formalizes it for all products.
+
+#### 4.10.3 — Rollback Discipline
+
+Every deployment must have a tested rollback path. "We can fix it forward" is not a rollback strategy.
+
+Rules:
+- Before every deployment: document the rollback procedure (what to run, in what order).
+- Feature flags for major new features — allows instant disable without code revert.
+- Database migrations must be forward-compatible — rollback should not require data migration reversal.
+- Git tags on every production deployment: `v{major}.{minor}.{patch}`.
+- Rollback is tested in staging before first production deploy.
+- Maximum acceptable rollback time: 5 minutes for feature flag toggle, 15 minutes for full code rollback.
+
+#### 4.10.4 — Data Backup and Disaster Recovery
+
+Every product that stores user data must have automated backups and a tested recovery procedure.
+
+Rules:
+- Database backups: daily automated, retained for 30 days minimum.
+- Backup verification: restore from backup tested at least once per quarter.
+- File/media backups: if the product stores user files, they must be backed up separately from the database.
+- Recovery Time Objective (RTO): define per product — how long until service is restored after total failure.
+- Recovery Point Objective (RPO): define per product — maximum acceptable data loss window.
+- Disaster recovery plan documented in `docs/runbooks/disaster-recovery.md`.
+
+Backup schedule by tier:
+- **LIGHT:** optional (no user data typically).
+- **MEDIUM:** daily database backup, 7-day retention minimum.
+- **HEAVY:** daily database backup, 30-day retention, tested quarterly restore, documented DR plan.
+
+#### 4.10.5 — Changelog and Versioning Discipline
+
+Every product uses semantic versioning and maintains a changelog.
+
+Rules:
+- Semantic Versioning (SemVer): MAJOR.MINOR.PATCH
+  - MAJOR: breaking changes.
+  - MINOR: new features, backward compatible.
+  - PATCH: bug fixes, backward compatible.
+- CHANGELOG.md at project root following Keep a Changelog format:
+```markdown
+# Changelog
+
+## [Unreleased]
+
+## [1.2.0] - 2026-03-16
+### Added
+- New resurfacing algorithm
+### Fixed
+- Voice note transcription timeout
+### Changed
+- Increased default token limit to 2048
+```
+- Git tags for every release: `git tag v1.2.0`.
+- Release notes generated from changelog for significant releases.
+
+#### 4.10.6 — Privacy by Design
+
+Products that handle personal or sensitive data must implement privacy protections from the architecture phase, not as a bolt-on after launch.
+
+Rules:
+- **Data minimization:** collect only what the product needs. Don't store data "just in case."
+- **Encryption at rest:** all personal data encrypted in the database.
+- **Encryption in transit:** HTTPS required for all external communication.
+- **User data export:** users can request a copy of their data (required for GDPR compliance).
+- **User data deletion:** users can request deletion of their data. Deletion must be complete, not just a soft-delete flag.
+- **Consent:** if the product processes personal data, user consent must be explicit and recorded.
+- **Third-party data sharing:** document exactly what data is sent to external services (AI APIs, analytics, etc.) and ensure users are informed.
+- Privacy-sensitive products (like HULMI which processes voice notes and personal thoughts) must have a privacy section in their PRD defining how each data type is protected.
+
+This applies from the architecture phase — privacy decisions are ADRs, not afterthoughts.
+
+#### 4.10.7 — Performance Baselines
+
+Every product deployed to production must have defined performance baselines and regression detection.
+
+Rules by tier:
+
+**MEDIUM tier:**
+- API response time targets defined (e.g., p95 < 500ms).
+- Page/screen load time targets defined (e.g., < 3 seconds on 4G).
+- Baseline measurements recorded before launch.
+
+**HEAVY tier:**
+- All MEDIUM requirements plus:
+- Load testing performed before launch with realistic traffic patterns.
+- Performance regression detection — if response times degrade 2x from baseline, alert fires.
+- Performance budgets for frontend (bundle size limits, image optimization).
+
+#### 4.10.8 — Accessibility and Internationalization
+
+Products targeting end users must consider accessibility and internationalization from the architecture phase.
+
+**Internationalization (i18n):**
+- All user-facing strings externalized into translation files from day one (never hardcoded in components).
+- RTL (right-to-left) support considered in CSS architecture (critical for Arabic-speaking GCC market).
+- Date, time, number, and currency formatting locale-aware.
+- i18n framework installed during Phase 6 first build prompt, not bolted on later.
+
+**Accessibility (a11y):**
+- All interactive elements have aria labels.
+- Keyboard navigation works for all critical flows.
+- Color contrast meets WCAG AA standard (4.5:1 for body text).
+- Screen reader tested for critical user journeys (at least once before launch).
+
+Tier enforcement:
+- **LIGHT:** not applicable (internal tools).
+- **MEDIUM:** i18n framework installed, RTL-ready CSS, externalized strings.
+- **HEAVY:** all MEDIUM plus a11y testing, WCAG AA compliance on critical flows.
 
 ---
 
@@ -1491,3 +1807,4 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.5.0 | 2026-03-15 | Formalized 8-phase product lifecycle pipeline with decision gates. Added Diagram-First Documentation principle (Section 5.8). Section 3 rewritten with Mermaid flowchart. |
 | 1.6.0 | 2026-03-15 | Added Section 4.9: Code Standards (Externalized Configuration, Structured Logging from Day One, Config Directory). ASPS updated to v1.2.0. Scaffold skill updated with config templates. |
 | 1.7.0 | 2026-03-16 | Expanded Engineering Standards from 3 to 15 non-negotiable principles. Added: Testing (no code without tests), Error Handling, Input Validation, Type Safety, DRY + Single Responsibility, Dependency Management, Code Review, Observability, CI/CD Quality Gates, Database Migration Discipline, API Versioning, Environment Parity. Added enforcement tier table. ASPS updated to v1.3.0. |
+| 1.8.0 | 2026-03-16 | Added Cultural Principles (6 foundational values: Users First, Blameless Culture, Freedom + Responsibility, Design for Failure, Dogfooding, Nemawashi). Added Operational Standards (PRR gate, blameless post-mortem, rollback discipline, data backup + DR, changelog + versioning, privacy by design, performance baselines, accessibility + i18n). Total: 6 cultural principles + 23 engineering/operational standards. Updated product lifecycle pipeline with PRR gate (Phase 6.5). |
