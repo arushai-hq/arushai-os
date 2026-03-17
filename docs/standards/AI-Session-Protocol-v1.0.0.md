@@ -1,7 +1,7 @@
-# AI Session Protocol v1.0.0
+# AI Session Protocol v1.0.1
 
-**Version:** 1.0.0
-**Date:** 2026-03-16
+**Version:** 1.0.1
+**Date:** 2026-03-17
 **Status:** Locked
 **Author:** ARUSHAI Systems Private Limited
 **Session:** ARUSHAI-FORGE-002
@@ -29,7 +29,7 @@ Every AI session falls into one of these categories:
 | Operations | Daily ops, debugging, troubleshooting | TradeOS trading sessions |
 | Audit | Compliance checks, code review | OSD compliance audits |
 
-Each type has different depth expectations but ALL 13 rules apply to every type.
+Each type has different depth expectations but ALL 15 rules apply to every type. All session types use CC prompt numbering (Rule 15) for traceability.
 
 ---
 
@@ -250,6 +250,66 @@ Each type has different depth expectations but ALL 13 rules apply to every type.
 - Handoffs that are too brief ("We discussed HULMI. Continue from there.")
 - Handoffs that are too verbose (5 pages of narrative instead of structured bullets)
 
+### Rule 14: Context Delta After Every Step
+
+**The rule:** After every successful CC execution, immediately update the living document.
+
+**Implementation:**
+- After CC confirms a prompt executed successfully (commit hash received), the web session generates a short CC prompt to apply a delta to {project}_context.md
+- The delta includes: what was built/changed, current phase/state, what's next, and the CC prompt ID that produced the change
+- This is non-negotiable — no "we'll update it later" or "we'll batch the updates"
+- The living document is the single source of truth. If it's stale, the next session starts with wrong context.
+
+**Delta format:**
+
+```
+Delta — Section: Current State
+[What changed]
+
+Delta — Session Log
+{DATE} | {SESSION}-CC{NNN} | {Summary} | {commit_hash}
+
+Delta — Last Updated
+Date: {DATE}
+Summary: {What was done}
+```
+
+**Anti-patterns:**
+- Running 5 CC prompts then updating context once at the end
+- "We'll update the context file tomorrow"
+- Letting context diverge from actual repo state
+- Correct: CC prompt succeeds → context delta prompt generated immediately → context reflects reality
+
+### Rule 15: CC Prompt Numbering
+
+**The rule:** Every CC prompt gets a sequential ID for traceability.
+
+**Implementation:**
+- Format: {SESSION}-CC{NNN} where NNN is zero-padded three digits
+- Examples: FORGE-002-CC001, HULMI-CC015, TRADEOS-03-CC003
+- The numbering resets with each new session
+- The prompt ID appears in:
+  - The CC prompt itself (as a comment or header)
+  - The context delta (session log row)
+  - The commit message where practical: "docs: OSD v1.9.0 compliance [FORGE-002-CC012]"
+  - The handoff document (list of prompts generated with IDs)
+
+**Audit chain:**
+
+```
+Session (FORGE-002)
+  → Prompt (FORGE-002-CC012)
+    → Commit (48f9e05)
+      → Context delta (session log row referencing CC012 + 48f9e05)
+```
+
+This chain means: given any commit, you can trace back to which session and which prompt produced it. Given any session, you can list all prompts and their commits. Full traceability.
+
+**Anti-patterns:**
+- Unnumbered prompts with no way to track which produced what
+- Commit messages with no session/prompt reference
+- Correct: "docs: add security standards [FORGE-002-CC012]" → traceable to session, prompt, and context
+
 ---
 
 ## 4. Session Start Checklist
@@ -271,6 +331,7 @@ Every AI session should end with:
 - [ ] Handoff document created (if session is ending)
 - [ ] Parked items noted
 - [ ] Next actions listed
+- [ ] CC prompt count noted (e.g., "This session generated 15 CC prompts: FORGE-002-CC001 through CC015")
 
 ---
 
@@ -297,6 +358,13 @@ Every AI session should end with:
 
 ## Parked Items
 - [Items discussed but deferred]
+
+## CC Prompts Generated
+
+| ID | Description | Commit |
+|---|---|---|
+| {SESSION}-CC001 | [what it did] | [hash] |
+| {SESSION}-CC002 | [what it did] | [hash] |
 ```
 
 ---
@@ -306,6 +374,7 @@ Every AI session should end with:
 | Version | Date | Changes |
 |---|---|---|
 | 1.0.0 | 2026-03-16 | Initial protocol. 13 rules across 4 categories. Created in FORGE-002. |
+| 1.0.1 | 2026-03-17 | Added Rule 14 (Context Delta After Every Step) and Rule 15 (CC Prompt Numbering). Updated handoff template with prompt audit table. Total rules: 15. |
 
 ---
 

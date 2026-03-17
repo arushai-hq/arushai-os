@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.10.0 |
+| Version | 1.10.1 |
 | Last Updated | 2026-03-17 |
 | Author | Irfan |
-| Status | v1.10.0 — AI Session Protocol added. 6 cultural principles + 42 engineering/operational/security/session standards. Living document — will be updated as the company evolves. |
+| Status | v1.10.1 — AI Session Protocol expanded to 15 rules. 6 cultural principles + 44 engineering/operational/security/session standards. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -999,10 +999,12 @@ Rules:
 | 40 | Challenge assumptions | Recommended | Required | Required |
 | 41 | Options with recommendation | Recommended | Required | Required |
 | 42 | Handoff protocol | Required | Required | Required |
+| 43 | Context delta after every step | Required | Required | Required |
+| 44 | CC prompt numbering | Recommended | Required | Required |
 
-Total: 6 cultural principles + 42 engineering/operational/security/session standards.
+Total: 6 cultural principles + 44 engineering/operational/security/session standards.
 
-Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review. The AI Session Protocol standard document at `docs/standards/AI-Session-Protocol-v1.0.0.md` provides detailed implementation guidelines for rules 30-42.
+Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review. The AI Session Protocol standard document at `docs/standards/AI-Session-Protocol-v1.0.0.md` provides detailed implementation guidelines for rules 30-44.
 
 ### 4.10 — Operational Standards
 
@@ -1430,11 +1432,11 @@ Cross-reference: OSD Section 7 (Security and Governance Framework) covers compan
 
 ### 4.12 — AI Session Protocol
 
-Every AI/LLM web chat session — brainstorming, research, architecture, design, planning — follows these 13 rules. This applies to all platforms (Claude, Gemini, GPT, or any future model). The rules are organized into four categories: Discipline, Integrity, Efficiency, and Continuity.
+Every AI/LLM web chat session — brainstorming, research, architecture, design, planning — follows these 15 rules. This applies to all platforms (Claude, Gemini, GPT, or any future model). The rules are organized into four categories: Discipline, Integrity, Efficiency, and Continuity.
 
 ```mermaid
 flowchart TD
-    ASP[AI Session Protocol<br/>13 Rules]
+    ASP[AI Session Protocol<br/>15 Rules]
     ASP --> DIS[Discipline]
     ASP --> INT[Integrity]
     ASP --> EFF[Efficiency]
@@ -1456,6 +1458,8 @@ flowchart TD
     CON --> C1[6. Decision capture<br/>Explicit confirmation]
     CON --> C2[7. Context limit awareness<br/>85/90/95% warnings]
     CON --> C3[13. Handoff protocol]
+    CON --> C4[14. Context delta<br/>after every step]
+    CON --> C5[15. CC prompt numbering<br/>audit trail]
 
     style ASP fill:#EEEDFE,stroke:#534AB7,color:#3C3489
     style DIS fill:#E1F5EE,stroke:#0F6E56,color:#085041
@@ -1497,6 +1501,10 @@ flowchart TD
 **Rule 7: Context Limit Awareness** — Monitor session length. At approximately 85% context usage, show a brief warning. At approximately 90%, recommend generating a handoff and starting a new session. At approximately 95%, insist on creating a handoff immediately. Never let a session die without capturing decisions. The gold is in the discussion — losing it to a context limit is unacceptable.
 
 **Rule 13: Handoff Protocol** — When a session ends (naturally or at context limit), the handoff document must include: key decisions made (numbered), current state of work, exact resume point, open questions, and pending actions. The handoff must be dense enough that a new session can resume in under 2 minutes of reading without losing context.
+
+**Rule 14: Context Delta After Every Step** — After every successful CC build prompt execution, generate a short CC prompt to update the project's living document ({project}_context.md) with: what was built or done, current phase status, and what's next. The living document must always reflect reality — never let it go stale. Documentation follows execution immediately, not at the end of a session or "when we have time." This applies to every ARUSHAI project without exception. The context delta prompt should reference the CC prompt ID (Rule 15) that produced the change.
+
+**Rule 15: CC Prompt Numbering** — Every CC prompt generated in a session is sequentially numbered using the format: {SESSION}-CC{NNN} (e.g., FORGE-002-CC001, HULMI-CC015). The prompt ID is included in context deltas and in commit messages where practical. This creates a traceable audit chain: Session → Prompt ID → Commit hash → Context delta. Useful for backtracking, auditing, and understanding how a codebase evolved over time.
 
 For detailed implementation guidelines, anti-patterns, and templates, see `docs/standards/AI-Session-Protocol-v1.0.0.md`.
 
@@ -2086,3 +2094,4 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.8.0 | 2026-03-16 | Added Cultural Principles (6 foundational values: Users First, Blameless Culture, Freedom + Responsibility, Design for Failure, Dogfooding, Nemawashi). Added Operational Standards (PRR gate, blameless post-mortem, rollback discipline, data backup + DR, changelog + versioning, privacy by design, performance baselines, accessibility + i18n). Total: 6 cultural principles + 23 engineering/operational standards. Updated product lifecycle pipeline with PRR gate (Phase 6.5). |
 | 1.9.0 | 2026-03-16 | Added Security Standards (audit trail, encryption at rest, MFA everywhere, access control register, data inventory, secure development lifecycle). Created Compliance Readiness Roadmap (ISO 27001, SOC 2, IPO). Created Access Control Register template. Total standards: 29. |
 | 1.10.0 | 2026-03-17 | Added AI Session Protocol (Section 4.12) with 13 rules across 4 categories: Discipline, Integrity, Efficiency, Continuity. Created AI-Session-Protocol-v1.0.0.md standard document with detailed implementation guidelines. Total standards: 42. |
+| 1.10.1 | 2026-03-17 | Added Rules 14-15 to AI Session Protocol: Context Delta After Every Step, CC Prompt Numbering. Total session rules: 15. Total standards: 44. |
