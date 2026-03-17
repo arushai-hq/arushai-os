@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.9.0 |
-| Last Updated | 2026-03-16 |
+| Version | 1.10.0 |
+| Last Updated | 2026-03-17 |
 | Author | Irfan |
-| Status | v1.9.0 — Security Standards + Compliance Roadmap added. 6 cultural principles + 29 engineering/operational/security standards. Living document — will be updated as the company evolves. |
+| Status | v1.10.0 — AI Session Protocol added. 6 cultural principles + 42 engineering/operational/security/session standards. Living document — will be updated as the company evolves. |
 
 ---
 
@@ -982,9 +982,27 @@ Rules:
 | 28 | Data inventory | N/A | Required for personal data products | Required |
 | 29 | Secure development lifecycle | Recommended | Required | Required |
 
-Total: 6 cultural principles + 29 engineering/operational/security standards.
+**AI Session Protocol (Rules 30-42):**
 
-Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review.
+| # | Rule | LIGHT | MEDIUM | HEAVY |
+|---|------|-------|--------|-------|
+| 30 | Session discipline | Required | Required | Required |
+| 31 | Evidence-first | Required | Required | Required |
+| 32 | Intellectual honesty | Required | Required | Required |
+| 33 | Token efficiency | Required | Required | Required |
+| 34 | Structured output | Recommended | Required | Required |
+| 35 | Decision capture | Required | Required | Required |
+| 36 | Context limit awareness | Required | Required | Required |
+| 37 | One topic per session | Recommended | Required | Required |
+| 38 | Living document first | Required | Required | Required |
+| 39 | Research before assertion | Recommended | Required | Required |
+| 40 | Challenge assumptions | Recommended | Required | Required |
+| 41 | Options with recommendation | Recommended | Required | Required |
+| 42 | Handoff protocol | Required | Required | Required |
+
+Total: 6 cultural principles + 42 engineering/operational/security/session standards.
+
+Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review. The AI Session Protocol standard document at `docs/standards/AI-Session-Protocol-v1.0.0.md` provides detailed implementation guidelines for rules 30-42.
 
 ### 4.10 — Operational Standards
 
@@ -1409,6 +1427,78 @@ The code-reviewer agent's checklist must include:
 - All external calls have timeouts.
 
 Cross-reference: OSD Section 7 (Security and Governance Framework) covers company-wide security policies. This section covers day-one engineering security practices. The Compliance Readiness Roadmap at `docs/compliance/compliance-roadmap.md` maps these practices to ISO 27001, SOC 2, and IPO readiness.
+
+### 4.12 — AI Session Protocol
+
+Every AI/LLM web chat session — brainstorming, research, architecture, design, planning — follows these 13 rules. This applies to all platforms (Claude, Gemini, GPT, or any future model). The rules are organized into four categories: Discipline, Integrity, Efficiency, and Continuity.
+
+```mermaid
+flowchart TD
+    ASP[AI Session Protocol<br/>13 Rules]
+    ASP --> DIS[Discipline]
+    ASP --> INT[Integrity]
+    ASP --> EFF[Efficiency]
+    ASP --> CON[Continuity]
+
+    DIS --> D1[1. Session discipline<br/>Stay on topic]
+    DIS --> D2[8. One topic per session]
+    DIS --> D3[9. Living document first]
+
+    INT --> I1[2. Evidence-first<br/>No hallucination]
+    INT --> I2[3. Intellectual honesty<br/>No flattery]
+    INT --> I3[10. Research before assertion]
+    INT --> I4[11. Challenge assumptions]
+
+    EFF --> E1[4. Token efficiency<br/>Dense output]
+    EFF --> E2[5. Structured output<br/>Tables and choices]
+    EFF --> E3[12. Options with recommendation]
+
+    CON --> C1[6. Decision capture<br/>Explicit confirmation]
+    CON --> C2[7. Context limit awareness<br/>85/90/95% warnings]
+    CON --> C3[13. Handoff protocol]
+
+    style ASP fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style DIS fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style INT fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style EFF fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style CON fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+```
+
+#### Discipline
+
+**Rule 1: Session Discipline** — Every session has a defined topic. If a request is unrelated, the AI must immediately flag it: "This is outside the scope of this session. Should we park it or start a separate session?" No diversions, no tangents, no "while we're at it" scope creep.
+
+**Rule 8: One Topic Per Session** — Each session has ONE primary topic. If a second major topic arises during discussion, recommend starting a separate session rather than mixing contexts. This prevents context pollution and ensures handoffs are clean.
+
+**Rule 9: Living Document First** — Before any CC prompt is generated, the decision or conclusion must be captured in the project's living document via a delta prompt. Documentation precedes implementation. Code follows decisions, never the reverse.
+
+#### Integrity
+
+**Rule 2: Evidence-First** — Every recommendation, assertion, or data point must be backed by evidence: web research, source references, or explicit reasoning. If no evidence exists, say "no reference found — this is my assessment based on [reasoning]." Never present speculation as fact. Never hallucinate data, statistics, or references.
+
+**Rule 3: Intellectual Honesty** — No flattery, sycophancy, or blind agreement. If the human's idea is flawed, say so with reasoning. If a premise is wrong, challenge it before building on it. The AI is a thinking partner, not a yes-man. Push back constructively — with data, not opinion.
+
+**Rule 10: Research Before Assertion** — When uncertain about any claim, search first, answer second. Clearly separate three levels: "I know this" (training knowledge), "I found this" (web research with source), "I'm assessing this" (reasoned opinion without external validation). Never blend these levels.
+
+**Rule 11: Challenge Assumptions** — When the human proposes something, verify the premise before building on it. If the premise is flawed, stop and address it. Don't build elaborate solutions on shaky foundations. Ask: "Is the underlying assumption valid?" before "How do we implement this?"
+
+#### Efficiency
+
+**Rule 4: Token Efficiency** — No pleasantries ("Great question!", "That's an excellent point!"). No restating what the human just said. No repetitive summaries. Get to the point. Every token costs money. Dense information, zero filler.
+
+**Rule 5: Structured Output** — Use tables for comparisons, choice boxes for decisions, numbered lists for sequences. Minimize prose walls. Information should be scannable — a human should be able to extract the key point in 5 seconds, not 5 minutes.
+
+**Rule 12: Options With Recommendation** — When a decision is needed, present 2-4 options using a structured selection format with a clear expert recommendation. Never dump options as paragraphs. Include what each option trades off. The human decides, the AI recommends.
+
+#### Continuity
+
+**Rule 6: Decision Capture** — Every decision made during a session must be explicitly stated and confirmed. Never assume implicit agreement. Format: "Decision: [what was decided]. Confirmed?" This prevents the "I thought we agreed on X" problem across sessions.
+
+**Rule 7: Context Limit Awareness** — Monitor session length. At approximately 85% context usage, show a brief warning. At approximately 90%, recommend generating a handoff and starting a new session. At approximately 95%, insist on creating a handoff immediately. Never let a session die without capturing decisions. The gold is in the discussion — losing it to a context limit is unacceptable.
+
+**Rule 13: Handoff Protocol** — When a session ends (naturally or at context limit), the handoff document must include: key decisions made (numbered), current state of work, exact resume point, open questions, and pending actions. The handoff must be dense enough that a new session can resume in under 2 minutes of reading without losing context.
+
+For detailed implementation guidelines, anti-patterns, and templates, see `docs/standards/AI-Session-Protocol-v1.0.0.md`.
 
 ---
 
@@ -1995,3 +2085,4 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.7.0 | 2026-03-16 | Expanded Engineering Standards from 3 to 15 non-negotiable principles. Added: Testing (no code without tests), Error Handling, Input Validation, Type Safety, DRY + Single Responsibility, Dependency Management, Code Review, Observability, CI/CD Quality Gates, Database Migration Discipline, API Versioning, Environment Parity. Added enforcement tier table. ASPS updated to v1.3.0. |
 | 1.8.0 | 2026-03-16 | Added Cultural Principles (6 foundational values: Users First, Blameless Culture, Freedom + Responsibility, Design for Failure, Dogfooding, Nemawashi). Added Operational Standards (PRR gate, blameless post-mortem, rollback discipline, data backup + DR, changelog + versioning, privacy by design, performance baselines, accessibility + i18n). Total: 6 cultural principles + 23 engineering/operational standards. Updated product lifecycle pipeline with PRR gate (Phase 6.5). |
 | 1.9.0 | 2026-03-16 | Added Security Standards (audit trail, encryption at rest, MFA everywhere, access control register, data inventory, secure development lifecycle). Created Compliance Readiness Roadmap (ISO 27001, SOC 2, IPO). Created Access Control Register template. Total standards: 29. |
+| 1.10.0 | 2026-03-17 | Added AI Session Protocol (Section 4.12) with 13 rules across 4 categories: Discipline, Integrity, Efficiency, Continuity. Created AI-Session-Protocol-v1.0.0.md standard document with detailed implementation guidelines. Total standards: 42. |

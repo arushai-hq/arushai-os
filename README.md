@@ -16,6 +16,7 @@ Every ARUSHAI product repo and every future AI agent references this document as
 - [Product Registry](docs/product-registry.md) — living tracker of all ARUSHAI products, phases, and portfolio status
 - [Standards](docs/standards/) — locked ARUSHAI standards documents
   - [ASPS v1.3.0](docs/standards/ASPS-v1.3.0.md) — ARUSHAI Standard Project Structure: folder structure, CC configuration, CLAUDE.md templates, tier system, agent architecture, engineering standards, and composition patterns for all repos
+  - [AI Session Protocol v1.0.0](docs/standards/AI-Session-Protocol-v1.0.0.md) — 13 rules for AI/LLM chat sessions across 4 categories: Discipline, Integrity, Efficiency, Continuity
 - [Forge Sessions](docs/forge-sessions/) — research and discovery session summaries
   - [FORGE-001](docs/forge-sessions/FORGE-001-summary.md) — Foundations of Reasoning, Grounding & Engineering
 - [Compliance](docs/compliance/) — compliance readiness and certification planning
