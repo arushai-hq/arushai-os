@@ -1,6 +1,6 @@
 ---
 name: arushai-project-scaffold
-description: Scaffolds a new ARUSHAI project following the ASPS (ARUSHAI Standard Project Structure). Use when creating a new project, initializing a repo, or when the user says "scaffold", "new project", "init project", or "set up project structure".
+description: Scaffolds a new ARUSHAI project following the ASPS (ARUSHAI Standard Project Structure) with full SDD (Spec-Driven Development) support. Use when creating a new project, initializing a repo, or when the user says "scaffold", "new project", "init project", "set up project structure", "setup SDD", or "spec-driven project". Includes specs/ directory, SDD templates, shared skills (sdd-workflow, osd-compliance), git submodule for governance docs, and spec-writer agent for MEDIUM/HEAVY tiers.
 ---
 
 # ARUSHAI Project Scaffold Skill
@@ -53,6 +53,15 @@ Add for MEDIUM and HEAVY:
   - `config/default.yaml` — Use template: `.claude/skills/arushai-project-scaffold/resources/config-default-template.yaml`
   - `config/secrets.yaml` — Use template: `.claude/skills/arushai-project-scaffold/resources/secrets-example-template.yaml` (this file is gitignored)
   - `config/README.md` — Documenting every config key, type, default, and purpose
+- `specs/` — Feature specifications directory (OSD 4.13)
+- `specs/templates/` — SDD templates (brief, spec, plan, tasks)
+- `docs/arushai-os/` — Git submodule for ARUSHAI governance docs
+
+Set up the submodule:
+```
+git submodule add https://github.com/arushai-hq/arushai-os.git docs/arushai-os
+```
+Pin to the latest main commit. This gives the project access to the OSD, ASPS, and shared skills.
 
 Add for HEAVY:
 - `docs/decisions/`
@@ -60,6 +69,20 @@ Add for HEAVY:
 - `.claude/hooks/bash/`
 
 Add subdirectory `CLAUDE.md` files for each component directory (Pattern B/C/D).
+
+## Step 3.5 — Install Shared Skills (MEDIUM and HEAVY only)
+
+Copy shared skills from the arushai-os submodule into the new project:
+
+1. Copy `docs/arushai-os/skills/sdd-workflow/` into `.claude/skills/sdd-workflow/` in the new project.
+2. Copy `docs/arushai-os/skills/osd-compliance/` into `.claude/skills/osd-compliance/` in the new project.
+3. Copy the 4 SDD templates from `.claude/skills/sdd-workflow/resources/` into `specs/templates/`:
+   - `brief-template.md`
+   - `spec-template.md`
+   - `plan-template.md`
+   - `tasks-template.md`
+
+These are copies, not symlinks. When arushai-os updates, run `git submodule update --remote` and re-copy updated skills.
 
 ## Step 4 — Generate Files
 
@@ -109,6 +132,7 @@ Per the ASPS Agent Architecture Standard, set up the agent layer.
 
 1. Create `.claude/agents/` directory.
 2. Create `.claude/agents/code-reviewer.md` using template: `.claude/skills/arushai-project-scaffold/resources/code-reviewer-template.md`. This is mandatory for all MEDIUM and HEAVY projects.
+3. Create `.claude/agents/spec-writer.md` using template: `.claude/skills/arushai-project-scaffold/resources/spec-writer-template.md`. This is mandatory for all MEDIUM and HEAVY projects (ASPS Section 7.9).
 
 ### For HEAVY tier:
 
@@ -139,3 +163,4 @@ Before finishing, verify:
 - All `{PLACEHOLDER}` variables have been replaced with real values
 - No `[TO BE COMPLETED]` markers remain unless the content is genuinely unknown
 - `.gitignore` includes `.claude/settings.local.json`, `.claude/CLAUDE.md`, `.env`, `logs/`
+- `specs/templates/` contains all 4 SDD templates (brief, spec, plan, tasks) — MEDIUM/HEAVY only
