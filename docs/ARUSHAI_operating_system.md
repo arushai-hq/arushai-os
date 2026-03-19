@@ -510,7 +510,7 @@ Current product status mapped to lifecycle phases:
 
 ### 3.13 — Project Structure Standard (ASPS)
 
-All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.3.0.md`.
+All ARUSHAI repositories follow the ARUSHAI Standard Project Structure (ASPS). The full specification is at `docs/standards/ASPS-v1.4.0.md`.
 
 **Key requirements:**
 
@@ -547,7 +547,7 @@ Start with the simplest pattern that fits. Upgrade when complexity demands it.
 | arushai-hq/VizBoard | C (Frontend + Backend) | MEDIUM | ~30% aligned, needs restructure + living doc |
 | arushai-hq/arushai-os | Documentation | LIGHT | ~60% aligned, verify CLAUDE.md |
 
-Full specification: `docs/standards/ASPS-v1.3.0.md`.
+Full specification: `docs/standards/ASPS-v1.4.0.md`.
 
 ### 3.14 — Product Registry
 
@@ -1010,7 +1010,7 @@ Rules:
 
 Total: 6 cultural principles + 45 engineering/operational/security/session standards.
 
-Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review. The AI Session Protocol standard document at `docs/standards/AI-Session-Protocol-v1.0.0.md` provides detailed implementation guidelines for rules 30-44. Section 4.13 defines the spec-driven development workflow (standard 45).
+Cross-reference: ASPS v1.4.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review. The AI Session Protocol standard document at `docs/standards/AI-Session-Protocol-v1.0.0.md` provides detailed implementation guidelines for rules 30-44. Section 4.13 defines the spec-driven development workflow (standard 45).
 
 ### 4.10 — Operational Standards
 
