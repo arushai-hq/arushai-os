@@ -50,8 +50,8 @@ Add for MEDIUM and HEAVY:
 - `{project}_context.md`
 - `docs/context_archive.md`
 - `config/` directory with initial files:
-  - `config/default.yaml` — Use template: `.claude/skills/arushai-project-scaffold/resources/config-default-template.yaml`
-  - `config/secrets.yaml` — Use template: `.claude/skills/arushai-project-scaffold/resources/secrets-example-template.yaml` (this file is gitignored)
+  - `config/default.yaml` — Use template: `skills/arushai-project-scaffold/resources/config-default-template.yaml`
+  - `config/secrets.yaml` — Use template: `skills/arushai-project-scaffold/resources/secrets-example-template.yaml` (this file is gitignored)
   - `config/README.md` — Documenting every config key, type, default, and purpose
 - `specs/` — Feature specifications directory (OSD 4.13)
 - `specs/templates/` — SDD templates (brief, spec, plan, tasks)
@@ -76,7 +76,7 @@ Copy shared skills from the arushai-os submodule into the new project:
 
 1. Copy `docs/arushai-os/skills/sdd-workflow/` into `.claude/skills/sdd-workflow/` in the new project.
 2. Copy `docs/arushai-os/skills/osd-compliance/` into `.claude/skills/osd-compliance/` in the new project.
-3. Copy the 4 SDD templates from `.claude/skills/sdd-workflow/resources/` into `specs/templates/`:
+3. Copy the 4 SDD templates from `docs/arushai-os/skills/sdd-workflow/resources/` into `specs/templates/`:
    - `brief-template.md`
    - `spec-template.md`
    - `plan-template.md`
@@ -87,7 +87,7 @@ These are copies, not symlinks. When arushai-os updates, run `git submodule upda
 ## Step 4 — Generate Files
 
 ### Root CLAUDE.md
-Use template: `.claude/skills/arushai-project-scaffold/resources/claude-md-template.md`
+Use template: `skills/arushai-project-scaffold/resources/claude-md-template.md`
 Replace all `{PLACEHOLDER}` variables with the project's actual values.
 Hard ceiling: 200 lines.
 
@@ -95,12 +95,12 @@ Hard ceiling: 200 lines.
 Professional overview: what the project is, stack summary, how to run it, link to CLAUDE.md for CC context.
 
 ### Subdirectory CLAUDE.md files (Pattern B/C/D)
-Use template: `.claude/skills/arushai-project-scaffold/resources/sub-claude-md-template.md`
+Use template: `skills/arushai-project-scaffold/resources/sub-claude-md-template.md`
 Each subdirectory CLAUDE.md must include explicit skill routing — which skills CC should use when working in that directory.
 Hard ceiling: 150 lines per subdirectory CLAUDE.md.
 
 ### {project}_context.md (MEDIUM and HEAVY only)
-Use template: `.claude/skills/arushai-project-scaffold/resources/context-md-template.md`
+Use template: `skills/arushai-project-scaffold/resources/context-md-template.md`
 Fill in known values; leave unknowns as `[TO BE COMPLETED]`.
 
 ### .claude/settings.json
@@ -114,7 +114,7 @@ Fill in known values; leave unknowns as `[TO BE COMPLETED]`.
 ```
 
 ### .gitignore
-Use template: `.claude/skills/arushai-project-scaffold/resources/gitignore-template`
+Use template: `skills/arushai-project-scaffold/resources/gitignore-template`
 
 ### docs/context_archive.md (MEDIUM and HEAVY only)
 ```markdown
@@ -131,8 +131,8 @@ Per the ASPS Agent Architecture Standard, set up the agent layer.
 ### For MEDIUM tier:
 
 1. Create `.claude/agents/` directory.
-2. Create `.claude/agents/code-reviewer.md` using template: `.claude/skills/arushai-project-scaffold/resources/code-reviewer-template.md`. This is mandatory for all MEDIUM and HEAVY projects.
-3. Create `.claude/agents/spec-writer.md` using template: `.claude/skills/arushai-project-scaffold/resources/spec-writer-template.md`. This is mandatory for all MEDIUM and HEAVY projects (ASPS Section 7.9).
+2. Create `.claude/agents/code-reviewer.md` using template: `skills/arushai-project-scaffold/resources/code-reviewer-template.md`. This is mandatory for all MEDIUM and HEAVY projects.
+3. Create `.claude/agents/spec-writer.md` using template: `skills/arushai-project-scaffold/resources/spec-writer-template.md`. This is mandatory for all MEDIUM and HEAVY projects (ASPS Section 7.9).
 
 ### For HEAVY tier:
 
@@ -145,7 +145,7 @@ Per the ASPS Agent Architecture Standard, set up the agent layer.
    - ai-engineer
    - qa-tester
    - devops-engineer
-3. For each selected role, create `.claude/agents/{role}.md` using template: `.claude/skills/arushai-project-scaffold/resources/agent-template.md`. Replace all `{PLACEHOLDER}` variables with the role's appropriate values. Set tool permissions per ASPS Section 7.8.
+3. For each selected role, create `.claude/agents/{role}.md` using template: `skills/arushai-project-scaffold/resources/agent-template.md`. Replace all `{PLACEHOLDER}` variables with the role's appropriate values. Set tool permissions per ASPS Section 7.8.
 
 Maximum: 4-5 agents per project (including code-reviewer). If the user selects more, advise converting the excess to skills instead.
 

@@ -6,7 +6,7 @@ Use this checklist when a new ASPS version is released. Ensures all dependent ar
 
 ## 1. Scaffold Skill
 
-- [ ] `.claude/skills/arushai-project-scaffold/SKILL.md` — Verify the dynamic ASPS reader instruction still points to the correct `docs/standards/` path
+- [ ] `skills/arushai-project-scaffold/SKILL.md` — Verify the dynamic ASPS reader instruction still points to the correct `docs/standards/` path
 - [ ] Verify all Step references match current ASPS section numbers (directory structure, tier requirements, agent architecture)
 - [ ] Review resource templates for consistency with the latest ASPS templates:
   - [ ] `resources/claude-md-template.md` — matches ASPS Root CLAUDE.md Template
@@ -22,7 +22,7 @@ Use this checklist when a new ASPS version is released. Ensures all dependent ar
 
 ## 2. Global Skill Copy
 
-- [ ] Re-copy updated scaffold skill to `~/.claude/skills/arushai-project-scaffold/` after changes
+- [ ] Re-copy updated scaffold skill from `skills/arushai-project-scaffold/` to target projects after changes
 
 ## 3. OSD References
 

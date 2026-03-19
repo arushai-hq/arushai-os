@@ -122,7 +122,7 @@ Final state: 6 cultural principles + 29 enforceable standards (15 engineering + 
 ### Priority 6 — Global Scaffold Skill Sync
 - After any ASPS or scaffold skill update, run:
   ```bash
-  cp -R /path/to/arushai-os/.claude/skills/arushai-project-scaffold/ ~/.claude/skills/arushai-project-scaffold/
+  cp -R /path/to/arushai-os/skills/arushai-project-scaffold/ ~/.claude/skills/arushai-project-scaffold/
   ```
 - ASPS Sync Checklist at docs/standards/ASPS-SYNC-CHECKLIST.md
 
@@ -138,7 +138,7 @@ Final state: 6 cultural principles + 29 enforceable standards (15 engineering + 
 | Compliance Roadmap | arushai-os/docs/compliance/compliance-roadmap.md | ISO/SOC/IPO path |
 | Access Control Register | arushai-os/docs/security/access-control-register.md | Infrastructure access tracking |
 | ASPS Sync Checklist | arushai-os/docs/standards/ASPS-SYNC-CHECKLIST.md | Version sync procedure |
-| Scaffold Skill | arushai-os/.claude/skills/arushai-project-scaffold/ | New project scaffolding |
+| Scaffold Skill | arushai-os/skills/arushai-project-scaffold/ | New project scaffolding |
 
 ---
 

@@ -24,3 +24,9 @@ Every CC prompt follows this exact structure, in this order:
 - Always include a requirement to update README.md and the product's living document as part of "When done."
 - Keep prompts token-efficient — no redundant explanation, no restating what CC already knows from its CLAUDE.md and skills.
 - Reference the template at `docs/templates/cc-prompt-template.md` for the canonical format.
+
+## SDD Integration
+
+When a feature has a tasks.md (see sdd-workflow skill), CC prompts are generated from the task breakdown — not written ad-hoc. Each task in tasks.md maps to exactly one CC prompt. The task provides: what to build, dependencies, and test requirements. This skill's prompt structure still applies — tasks.md provides the WHAT, this skill provides the FORMAT.
+
+For features without tasks.md (bug fixes, config changes, hotfixes per OSD 4.13.9), prompts are written directly using the standard structure above.
