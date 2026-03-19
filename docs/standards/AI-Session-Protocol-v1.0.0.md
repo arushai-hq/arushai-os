@@ -1,7 +1,7 @@
-# AI Session Protocol v1.0.1
+# AI Session Protocol v1.1.0
 
-**Version:** 1.0.1
-**Date:** 2026-03-17
+**Version:** 1.1.0
+**Date:** 2026-03-19
 **Status:** Locked
 **Author:** ARUSHAI Systems Private Limited
 **Session:** ARUSHAI-FORGE-002
@@ -29,11 +29,11 @@ Every AI session falls into one of these categories:
 | Operations | Daily ops, debugging, troubleshooting | TradeOS trading sessions |
 | Audit | Compliance checks, code review | OSD compliance audits |
 
-Each type has different depth expectations but ALL 15 rules apply to every type. All session types use CC prompt numbering (Rule 15) for traceability.
+Each type has different depth expectations but ALL 17 rules apply to every type. All session types use CC prompt numbering (Rule 15) for traceability.
 
 ---
 
-## 3. The 13 Rules — Detailed Implementation
+## 3. The 17 Rules — Detailed Implementation
 
 ### Rule 1: Session Discipline
 
@@ -310,6 +310,42 @@ This chain means: given any commit, you can trace back to which session and whic
 - Commit messages with no session/prompt reference
 - Correct: "docs: add security standards [FORGE-002-CC012]" → traceable to session, prompt, and context
 
+### Rule 16: Feature Brief Before Build
+
+**The rule:** No CC build prompt for a new feature without a founder-written feature brief and CC-generated, founder-approved spec.
+
+**Implementation:**
+- Web session produces a Feature Brief (2-5 paragraphs of intent — problem, success criteria, constraints, out of scope, concerns)
+- Brief is passed to the CC spec-writer agent
+- Agent generates spec.md → plan.md → tasks.md in three phased invocations
+- Founder approves each phase before the next begins
+- Build CC prompts are only generated AFTER tasks.md is approved
+- Bug fixes, config changes, and documentation updates are exempt per OSD 4.13.9 threshold table
+
+**Anti-patterns:**
+- Generating CC build prompts directly from web session discussion without a spec
+- Rubber-stamping specs without reading them
+- One-sentence briefs with insufficient substance ("Add auth" is not a brief)
+
+See OSD Section 4.13 for full workflow, templates, and approval gate checklists.
+
+### Rule 17: TDD-First Task Ordering
+
+**The rule:** In every task breakdown, test tasks precede implementation tasks.
+
+**Implementation:**
+- The spec-writer agent enforces this ordering structurally in tasks.md
+- For each unit of work: test task is listed BEFORE the corresponding implementation task
+- Implementation is complete only when preceding tests pass
+- This is structural enforcement of OSD 4.9.4 (Testing — No Code Without Tests)
+- Positive example: TradeOS achieved 723 tests through disciplined TDD ordering
+- Counter-example: HULMI v0 launched with zero tests — a mistake this rule prevents
+
+**Anti-patterns:**
+- tasks.md with implementation tasks and no corresponding test tasks
+- Test tasks listed AFTER implementation ("we'll add tests later")
+- "We'll add tests in a cleanup pass" — cleanup passes never happen
+
 ---
 
 ## 4. Session Start Checklist
@@ -375,6 +411,7 @@ Every AI session should end with:
 |---|---|---|
 | 1.0.0 | 2026-03-16 | Initial protocol. 13 rules across 4 categories. Created in FORGE-002. |
 | 1.0.1 | 2026-03-17 | Added Rule 14 (Context Delta After Every Step) and Rule 15 (CC Prompt Numbering). Updated handoff template with prompt audit table. Total rules: 15. |
+| 1.1.0 | 2026-03-19 | Added Rule 16 (Feature Brief Before Build) and Rule 17 (TDD-First Task Ordering). SDD integration. Refs OSD 4.13. Total rules: 17. |
 
 ---
 
