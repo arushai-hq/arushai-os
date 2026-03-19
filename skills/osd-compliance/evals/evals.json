@@ -1,0 +1,22 @@
+[
+  {"query": "I need to do the OSD compliance check for my implementation plan — check all 15 engineering standards against our approach for the new payment API. The plan is at specs/F007-payments/plan.md", "should_trigger": true},
+  {"query": "review the code in backend/src/services/auth.ts against the ARUSHAI engineering standards — I want to know if we're following 4.9.1 through 4.9.15 properly", "should_trigger": true},
+  {"query": "generate the OSD 4.9 compliance table for our new notification service plan — map each standard to how we'll handle config, logging, testing, error handling, and everything else", "should_trigger": true},
+  {"query": "run a standards audit on the HULMI codebase — check all the engineering principles and tell me where we have violations vs passes. Focus on the Foundation standards first", "should_trigger": true},
+  {"query": "our project is MEDIUM tier — which of the 15 engineering standards are required vs recommended vs optional for us? I need the tier enforcement breakdown", "should_trigger": true},
+  {"query": "I'm writing the plan for F004 and need to fill in the compliance check section. Walk me through what each OSD standard means for a React Native mobile app with Supabase backend", "should_trigger": true},
+  {"query": "check if the error handling in our API follows the OSD 4.9.5 standard — we should have structured errors with code, message, details, and request_id. Check backend/src/routes/", "should_trigger": true},
+  {"query": "do a code quality gate check on this PR — verify it meets our OSD engineering standards for testing, input validation, type safety, and error handling before I approve the merge", "should_trigger": true},
+  {"query": "we have console.log statements scattered through production code and some hardcoded API URLs — what OSD standards are we violating and how do I fix each one?", "should_trigger": true},
+  {"query": "I want to verify our project meets all HEAVY tier requirements for the 15 engineering standards. Generate a full compliance report with pass/fail for each standard", "should_trigger": true},
+  {"query": "fix the typo in README.md line 42 — it says 'teh' instead of 'the'", "should_trigger": false},
+  {"query": "run the test suite for the backend and tell me which tests are failing. I think something broke in the auth middleware", "should_trigger": false},
+  {"query": "can you review this PR? it changes the database migration for the users table and I want to make sure the rollback works correctly. PR is at #47", "should_trigger": false},
+  {"query": "I need to update the nginx config to add rate limiting on the /api/v2 endpoints. The current config is at docker/nginx/nginx.conf", "should_trigger": false},
+  {"query": "deploy the latest build to staging using the deploy script in scripts/deploy.sh. Make sure to run the health check after", "should_trigger": false},
+  {"query": "write a Python script that processes the CSV file at data/sales_q4.csv and generates a summary report with total revenue by region", "should_trigger": false},
+  {"query": "I need to set up the CI/CD pipeline for this repo using GitHub Actions. We need lint, test, and deploy stages. Can you create the workflow yaml?", "should_trigger": false},
+  {"query": "help me debug this error — getting a TypeError: Cannot read properties of undefined in the React component at frontend/src/components/Dashboard.tsx line 87", "should_trigger": false},
+  {"query": "refactor the utils.ts file to use proper TypeScript generics instead of any types — it's only about 50 lines and all in one file", "should_trigger": false},
+  {"query": "I've got a feature brief for HULMI — we need to add a habit streak system. Can you generate the spec from the brief at specs/F003-habit-streaks/brief.md?", "should_trigger": false}
+]
