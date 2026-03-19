@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 1.10.1 |
-| Last Updated | 2026-03-17 |
+| Version | 1.11.0 |
+| Last Updated | 2026-03-19 |
 | Author | Irfan |
-| Status | v1.10.1 — AI Session Protocol expanded to 15 rules. 6 cultural principles + 44 engineering/operational/security/session standards. Living document — will be updated as the company evolves. |
+| Status | v1.11.0 — Spec-Driven Feature Development (SDD cherry-pick). Model C workflow: founder briefs, CC specs, founder approves. 6 cultural principles + 45 engineering/operational/security/session standards. |
 
 ---
 
@@ -1002,9 +1002,15 @@ Rules:
 | 43 | Context delta after every step | Required | Required | Required |
 | 44 | CC prompt numbering | Recommended | Required | Required |
 
-Total: 6 cultural principles + 44 engineering/operational/security/session standards.
+**Spec-Driven Development (Standard 45):**
 
-Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review. The AI Session Protocol standard document at `docs/standards/AI-Session-Protocol-v1.0.0.md` provides detailed implementation guidelines for rules 30-44.
+| # | Standard | LIGHT | MEDIUM | HEAVY |
+|---|----------|-------|--------|-------|
+| 45 | Spec-driven feature development | Recommended | Required (>1 CC prompt) | Required (all features) |
+
+Total: 6 cultural principles + 45 engineering/operational/security/session standards.
+
+Cross-reference: ASPS v1.3.0 Section 9.4 references these standards. The code-reviewer agent template enforces compliance with all applicable principles on every code review. The AI Session Protocol standard document at `docs/standards/AI-Session-Protocol-v1.0.0.md` provides detailed implementation guidelines for rules 30-44. Section 4.13 defines the spec-driven development workflow (standard 45).
 
 ### 4.10 — Operational Standards
 
@@ -1507,6 +1513,214 @@ flowchart TD
 **Rule 15: CC Prompt Numbering** — Every CC prompt generated in a session is sequentially numbered using the format: {SESSION}-CC{NNN} (e.g., FORGE-002-CC001, HULMI-CC015). The prompt ID is included in context deltas and in commit messages where practical. This creates a traceable audit chain: Session → Prompt ID → Commit hash → Context delta. Useful for backtracking, auditing, and understanding how a codebase evolved over time.
 
 For detailed implementation guidelines, anti-patterns, and templates, see `docs/standards/AI-Session-Protocol-v1.0.0.md`.
+
+### 4.13 — Spec-Driven Feature Development
+
+Every feature, fix, or significant change follows a structured specification process BEFORE any build code is written. The founder provides strategic intent via a Feature Brief; the CC spec-writer agent formalizes it into spec.md, plan.md, and tasks.md; the founder reviews and approves at each phase gate.
+
+#### 4.13.1 — The Operating Model (Model C)
+
+The founder operates as CTO — providing direction, constraints, and strategic intent. The CC spec-writer agent operates as PM — translating intent into formal specifications. Build agents operate as engineers — executing approved tasks. The founder retains approval at every phase gate.
+
+The flow: Web session produces Feature Brief → CC spec-writer agent generates spec.md (founder reviews/approves) → CC spec-writer generates plan.md (founder reviews/approves) → CC spec-writer generates tasks.md (founder reviews/approves) → CC build agents execute tasks one by one.
+
+```mermaid
+flowchart TD
+    FB[Founder writes<br/>Feature Brief]
+    SW1[CC spec-writer<br/>generates spec.md]
+    R1{Founder<br/>reviews spec}
+    SW2[CC spec-writer<br/>generates plan.md]
+    R2{Founder<br/>reviews plan}
+    SW3[CC spec-writer<br/>generates tasks.md]
+    R3{Founder<br/>reviews tasks}
+    Q{Agent has<br/>questions?}
+    AQ[Agent asks<br/>clarifying questions]
+    EX[CC build agents<br/>execute tasks]
+
+    FB --> SW1
+    SW1 --> Q
+    Q -->|Yes| AQ
+    AQ --> SW1
+    Q -->|No| R1
+    R1 -->|Approve| SW2
+    R1 -->|Reject| SW1
+    SW2 --> R2
+    R2 -->|Approve| SW3
+    R2 -->|Reject| SW2
+    SW3 --> R3
+    R3 -->|Approve| EX
+    R3 -->|Reject| SW3
+
+    style FB fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style SW1 fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+    style SW2 fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+    style SW3 fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+    style R1 fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style R2 fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style R3 fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style Q fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style AQ fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style EX fill:#E1F5EE,stroke:#0F6E56,color:#085041
+```
+
+#### 4.13.2 — The Feature Brief (Founder's Input)
+
+Written by the founder in a web session. 2-5 paragraphs capturing:
+
+- **What problem** is being solved
+- **What success looks like** (desired outcome)
+- **Constraints** (technical, timeline, budget)
+- **Out of scope** (what this is NOT)
+- **Concerns** (risks the founder is already aware of)
+
+Deliberately short — captures INTENT not implementation. Passed to the spec-writer agent as input.
+
+#### 4.13.3 — The Spec-Writer Agent (CC's Role)
+
+A CC subagent that receives the brief and generates three documents in three phased invocations. The spec-writer agent has 7 mandatory behaviors:
+
+1. **MUST ask clarifying questions when brief is ambiguous — never assume.** Re-state the problem in own words, ask "Is my understanding correct?" This is the #1 rule.
+2. **MUST NOT proceed to next phase if current phase has unresolved questions.**
+3. **MUST check OSD compliance during plan generation** (4.9.1 config, 4.9.2 logging, 4.9.4 testing, 4.9.5 error handling).
+4. **MUST use TDD-first ordering in task generation.**
+5. **MUST output in template format from specs/templates/.**
+6. **MUST flag risks and unknowns as NEEDS CLARIFICATION.**
+7. **MUST have read-only access** (Read, Grep, Glob, WebFetch, WebSearch).
+
+Three-phase invocation:
+
+| Phase | Output | Gate |
+|---|---|---|
+| Phase 1: Specify | spec.md | Founder reviews and approves |
+| Phase 2: Plan | plan.md | Founder reviews and approves |
+| Phase 3: Tasks | tasks.md | Founder reviews and approves |
+
+#### 4.13.4 — Spec Document (spec.md)
+
+Required sections:
+
+- **Feature ID** — Sequential identifier (F001, F002...)
+- **Problem Statement** — What problem this solves, restated from the brief
+- **Acceptance Criteria** — Each criterion must be testable
+- **Out of Scope** — Explicit boundaries
+- **Constraints** — Technical, timeline, or resource constraints
+- **Dependencies** — Verified against the codebase
+- **Questions Asked and Resolved** — Audit trail of intent clarification
+
+#### 4.13.5 — Implementation Plan (plan.md)
+
+Required sections:
+
+- **Technical Approach** — How the feature will be built
+- **OSD Compliance Check** — Table mapping standards to approach:
+
+| Standard | Ref | Approach |
+|---|---|---|
+| Externalized configuration | 4.9.1 | [How this feature handles config] |
+| Structured logging | 4.9.2 | [How this feature handles logging] |
+| Testing | 4.9.4 | [Test strategy] |
+| Error handling | 4.9.5 | [Error handling approach] |
+
+- **Risk Assessment** — Table with likelihood, impact, and mitigation:
+
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| [Risk description] | Low/Medium/High | Low/Medium/High | [Mitigation strategy] |
+
+- **Research Items** — Items flagged as NEEDS CLARIFICATION
+- **File Impact** — Which files will be created, modified, or deleted
+
+#### 4.13.6 — Task Breakdown (tasks.md)
+
+Required sections:
+
+- **Ordered Task List** — Sequential identifiers (T001, T002...)
+- **Dependencies** — Which tasks depend on which
+- **Test Requirements** — What tests each task must include
+- **Estimated Scope** — S (small), M (medium), L (large)
+
+TDD-first ordering rules:
+
+1. Scaffold first (project structure, config files)
+2. Test task before implementation task
+3. Integration tests after unit work
+4. Documentation last
+
+Example task sequence showing test-before-code pattern:
+
+| ID | Task | Scope | Depends On |
+|---|---|---|---|
+| T001 | Scaffold directory structure and config | S | — |
+| T002 | Write unit tests for core logic | M | T001 |
+| T003 | Implement core logic (make tests pass) | M | T002 |
+| T004 | Write integration tests for API layer | M | T003 |
+| T005 | Implement API endpoints (make tests pass) | M | T004 |
+| T006 | Write E2E tests for user flow | M | T005 |
+| T007 | Implement UI components (make tests pass) | L | T006 |
+| T008 | Update documentation | S | T007 |
+
+Task IDs map 1:1 to CC prompt IDs (per AI Session Protocol Rule 15).
+
+#### 4.13.7 — The Approval Gate
+
+NON-NEGOTIABLE at each phase boundary. The founder must explicitly approve before the next phase begins.
+
+**spec.md review checklist:**
+
+- [ ] Is this the right problem to solve?
+- [ ] Are acceptance criteria testable?
+- [ ] Are the founder's concerns addressed?
+- [ ] Is the scope appropriately bounded?
+
+**plan.md review checklist:**
+
+- [ ] Does the technical approach make sense?
+- [ ] Are OSD standards addressed?
+- [ ] Are risks identified with mitigations?
+- [ ] Are all NEEDS CLARIFICATION items resolved?
+
+**tasks.md review checklist:**
+
+- [ ] Does every code task have a corresponding test task?
+- [ ] Are dependencies logical and sequential?
+- [ ] Are task sizes reasonable (no single task > L)?
+- [ ] Is TDD ordering respected?
+
+The founder may: **approve**, **reject with notes**, or **request revisions**.
+
+#### 4.13.8 — The Spec Lifecycle
+
+Specs are NOT disposable. They serve as permanent documentation.
+
+- **During build:** If gaps are found in the spec, update spec.md and have the founder re-approve before continuing.
+- **After build:** The completed spec becomes permanent feature documentation — it explains WHY the feature exists and HOW it was designed.
+- **For iterations:** A new spec references the original (e.g., "Extends F001") rather than modifying the completed spec.
+
+#### 4.13.9 — When This Process Is Required
+
+| Change Type | Brief | Spec | Plan | Tasks |
+|---|---|---|---|---|
+| New feature | Required | Required | Required | Required |
+| Significant refactor (>3 files) | Required | Required | Required | Required |
+| Bug fix (single file) | Exempt | Exempt | Exempt | Exempt |
+| Config change | Exempt | Exempt | Exempt | Exempt |
+| Documentation update | Exempt | Exempt | Exempt | Exempt |
+| Hotfix | Exempt | Exempt | Exempt | Exempt (spec retroactively if systemic) |
+
+**Threshold:** If work takes more than one CC prompt, it needs a brief and spec.
+
+#### 4.13.10 — Relationship to Existing Standards
+
+| OSD Section | Connection |
+|---|---|
+| Section 3.5 (Scope phase) | Feature brief captures scope; spec formalizes it |
+| Section 3.8 (Build phase) | tasks.md drives the build phase execution |
+| Section 4.2 (Two-Layer System) | Model C enhances the two-layer system with structured handoff between web session and CC |
+| Section 4.9.4 (Testing) | TDD-first ordering enforces testing structurally, not optionally |
+| ASPS Section 7 (Agent Architecture) | Spec-writer agent follows the ASPS agent standard |
+| AI Session Protocol Rule 9 | Living document first — spec is the living document for features |
+| AI Session Protocol Rule 14 | Context delta after every step — each task completion updates context |
+| AI Session Protocol Rule 15 | CC prompt numbering — task IDs map to prompt IDs for traceability |
 
 ---
 
@@ -2095,3 +2309,4 @@ The Nemawashi principle applies to the company evolution itself: plan each stage
 | 1.9.0 | 2026-03-16 | Added Security Standards (audit trail, encryption at rest, MFA everywhere, access control register, data inventory, secure development lifecycle). Created Compliance Readiness Roadmap (ISO 27001, SOC 2, IPO). Created Access Control Register template. Total standards: 29. |
 | 1.10.0 | 2026-03-17 | Added AI Session Protocol (Section 4.12) with 13 rules across 4 categories: Discipline, Integrity, Efficiency, Continuity. Created AI-Session-Protocol-v1.0.0.md standard document with detailed implementation guidelines. Total standards: 42. |
 | 1.10.1 | 2026-03-17 | Added Rules 14-15 to AI Session Protocol: Context Delta After Every Step, CC Prompt Numbering. Total session rules: 15. Total standards: 44. |
+| 1.11.0 | 2026-03-19 | Added Section 4.13: Spec-Driven Feature Development — Model C workflow with feature briefs, spec-writer agent, three-phase spec generation, approval gates, and TDD-first task ordering. Cherry-picked from GitHub spec-kit methodology, adapted for ARUSHAI two-layer system. Total standards: 45. |
